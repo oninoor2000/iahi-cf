@@ -1,5 +1,6 @@
 import { MicroscopeIcon } from "lucide-react";
 import AutoScroll from "embla-carousel-auto-scroll";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Carousel,
@@ -92,8 +93,19 @@ const EXPERTS: readonly ExpertCard[] = [
 ] as const;
 
 export function ExpertsCarousel() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section className="pb-12 pt-2 sm:pb-16">
+    <motion.section
+      className="pb-12 pt-2 sm:pb-16"
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.4,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+    >
       <div className="flex justify-center">
         <div className="w-full max-w-[1600px]">
           <Carousel
@@ -144,6 +156,6 @@ export function ExpertsCarousel() {
           </Carousel>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -1,4 +1,6 @@
 import { Mail, MapPin } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+
 import { Separator } from "@/components/ui/separator";
 
 const QUICK_LINKS = [
@@ -16,9 +18,21 @@ const LEGAL_LINKS = [
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const reduceMotion = useReducedMotion();
 
   return (
-    <footer className="bg-sidebar text-sidebar-foreground">
+    <motion.footer
+      className="bg-sidebar text-sidebar-foreground"
+      initial={
+        reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }
+      }
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.45,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main footer grid */}
         <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
@@ -37,7 +51,7 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-            <p className="text-sm text-sidebar-foreground/60 leading-relaxed max-w-xs">
+            <p className="text-sm text-sidebar-foreground/80 leading-relaxed max-w-xs">
               Independent and non-profit professional organization advancing
               health informatics through collaboration, scientific exchange, and
               institutional development in Indonesia.
@@ -46,15 +60,15 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
               Quick Links
-            </h3>
+            </h2>
             <ul className="space-y-2.5">
               {QUICK_LINKS.map(({ label, href }) => (
                 <li key={href}>
                   <a
                     href={href}
-                    className="text-sm text-sidebar-foreground/60 hover:text-sidebar-primary transition-colors"
+                    className="text-sm text-sidebar-foreground/80 hover:text-sidebar-primary transition-colors"
                   >
                     {label}
                   </a>
@@ -65,15 +79,15 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
               Legal
-            </h3>
+            </h2>
             <ul className="space-y-2.5">
               {LEGAL_LINKS.map(({ label, href }) => (
                 <li key={href}>
                   <a
                     href={href}
-                    className="text-sm text-sidebar-foreground/60 hover:text-sidebar-primary transition-colors"
+                    className="text-sm text-sidebar-foreground/80 hover:text-sidebar-primary transition-colors"
                   >
                     {label}
                   </a>
@@ -84,15 +98,15 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
               Contact
-            </h3>
+            </h2>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2.5 text-sm text-sidebar-foreground/60">
+              <li className="flex items-start gap-2.5 text-sm text-sidebar-foreground/80">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-sidebar-primary/70" />
                 <span>Jakarta, Indonesia</span>
               </li>
-              <li className="flex items-center gap-2.5 text-sm text-sidebar-foreground/60">
+              <li className="flex items-center gap-2.5 text-sm text-sidebar-foreground/80">
                 <Mail className="h-4 w-4 shrink-0 text-sidebar-primary/70" />
                 <a
                   href="mailto:sekretariat@iahi.net"
@@ -108,7 +122,7 @@ export default function Footer() {
         <Separator className="bg-sidebar-border" />
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 text-xs text-sidebar-foreground/40">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 text-xs text-sidebar-foreground/70">
           <p>
             &copy; {year} Indonesian Association of Health Informatics (IAHI).
             All rights reserved.
@@ -118,6 +132,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
