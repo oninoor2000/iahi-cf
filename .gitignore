@@ -1,13 +1,63 @@
-node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
-.env
-.nitro
-.tanstack
-.wrangler
-.output
-.vinxi
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+coverage/
+.output/
+
+# Framework / tool artifacts
+.nitro/
+.tanstack/
+.vinxi/
+.wrangler/
 __unconfig*
+.vite/
+.turbo/
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Environment and local config
+.env*
+*.local
+!.env.example
+!.env*.example
+
+# Secrets and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.kdbx
+
+# Logs and runtime dumps
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.pid
+*.seed
+*.stackdump
+
+# Deployment platform folders
+.vercel/
+.netlify/
+
+# Editor / OS files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# Project local files
 todos.json

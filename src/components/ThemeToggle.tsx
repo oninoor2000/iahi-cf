@@ -11,7 +11,7 @@ import {
 import { useTheme } from "./providers/theme-provider";
 
 export default function ThemeToggle() {
-  const { themeMode, setThemeMode } = useTheme();
+  const { setThemeMode } = useTheme();
 
   const handleThemeChange = (value: THEME_MODE_TYPE) => {
     setThemeMode(value);
@@ -23,7 +23,7 @@ export default function ThemeToggle() {
         <Button
           variant="outline"
           size="icon"
-          aria-label={`Theme mode: ${themeMode}`}
+          aria-label="Select theme"
           title="Select theme mode"
           className="relative border-(--chip-line) bg-(--chip-bg) text-(--sea-ink)"
         >
