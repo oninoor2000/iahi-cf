@@ -61,3 +61,4 @@ yarn-error.log*
 
 # Project local files
 todos.json
+docs-private/

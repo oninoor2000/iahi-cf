@@ -2,7 +2,7 @@ import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Header from "../components/sections/header";
 import { ThemeProvider } from "../components/providers/theme-provider";
 
 import appCss from "../styles.css?url";
@@ -12,16 +12,17 @@ const THEME_INIT_SCRIPT = `(function(){try{var key='iahi-theme';var cookie=docum
 export const Route = createRootRoute({
   head: () => ({
     meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
-        charSet: "utf-8",
+        title: "IAHI – Perhimpunan Informatika Kesehatan Indonesia",
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        name: "description",
+        content:
+          "Organisasi profesi yang menaungi pemerhati di bidang Informatika Kesehatan di Indonesia. Bergabung bersama para profesional dari kedokteran, kesehatan masyarakat, dan teknologi informasi.",
       },
-      {
-        title: "TanStack Start Starter",
-      },
+      { name: "theme-color", content: "#1a6fb4" },
     ],
     links: [
       {
