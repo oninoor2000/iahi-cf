@@ -1,44 +1,123 @@
+import { Mail, MapPin } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+
+const QUICK_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Publications", href: "/publications" },
+  { label: "Agenda", href: "/agenda" },
+  { label: "Members", href: "/members" },
+] as const;
+
+const LEGAL_LINKS = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms and Conditions", href: "/terms-and-conditions" },
+] as const;
+
 export default function Footer() {
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t border-[var(--line)] px-4 pb-14 pt-10 text-[var(--sea-ink-soft)]">
-      <div className="page-wrap flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-        <p className="m-0 text-sm">
-          &copy; {year} Your name here. All rights reserved.
-        </p>
-        <p className="island-kicker m-0">Built with TanStack Start</p>
-      </div>
-      <div className="mt-4 flex justify-center gap-4">
-        <a
-          href="https://x.com/tan_stack"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-        >
-          <span className="sr-only">Follow TanStack on X</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-            <path
-              fill="currentColor"
-              d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-            />
-          </svg>
-        </a>
-        <a
-          href="https://github.com/TanStack"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-        >
-          <span className="sr-only">Go to TanStack GitHub</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-            <path
-              fill="currentColor"
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-            />
-          </svg>
-        </a>
+    <footer className="bg-sidebar text-sidebar-foreground">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Main footer grid */}
+        <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm">
+                IAHI
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-sidebar-foreground/80 leading-tight">
+                  Perhimpunan Informatika
+                </p>
+                <p className="text-xs font-semibold text-sidebar-foreground/80 leading-tight">
+                  Kesehatan Indonesia
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-sidebar-foreground/60 leading-relaxed max-w-xs">
+              Independent and non-profit professional organization advancing
+              health informatics through collaboration, scientific exchange, and
+              institutional development in Indonesia.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+              Quick Links
+            </h3>
+            <ul className="space-y-2.5">
+              {QUICK_LINKS.map(({ label, href }) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    className="text-sm text-sidebar-foreground/60 hover:text-sidebar-primary transition-colors"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+              Legal
+            </h3>
+            <ul className="space-y-2.5">
+              {LEGAL_LINKS.map(({ label, href }) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    className="text-sm text-sidebar-foreground/60 hover:text-sidebar-primary transition-colors"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+              Contact
+            </h3>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5 text-sm text-sidebar-foreground/60">
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-sidebar-primary/70" />
+                <span>Jakarta, Indonesia</span>
+              </li>
+              <li className="flex items-center gap-2.5 text-sm text-sidebar-foreground/60">
+                <Mail className="h-4 w-4 shrink-0 text-sidebar-primary/70" />
+                <a
+                  href="mailto:sekretariat@iahi.net"
+                  className="hover:text-sidebar-primary transition-colors"
+                >
+                  sekretariat@iahi.net
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <Separator className="bg-sidebar-border" />
+
+        {/* Bottom bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 text-xs text-sidebar-foreground/40">
+          <p>
+            &copy; {year} Indonesian Association of Health Informatics (IAHI).
+            All rights reserved.
+          </p>
+          <p className="flex items-center gap-1">
+            Established on November 10, 2005 · Jakarta
+          </p>
+        </div>
       </div>
     </footer>
-  )
+  );
 }

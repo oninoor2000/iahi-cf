@@ -30,14 +30,14 @@ const navigationData: NavigationItem[] = [
 const Navbar = () => {
   return (
     <header className="bg-background sticky top-0 z-50 border-b border-border/50">
-      <div className="flex max-w-6xl mx-auto items-center justify-between px-4 py-5 sm:px-6 ">
+      <div className="flex max-w-6xl mx-auto items-center justify-between py-5 px-4 md:px-0">
         <span className="text-2xl font-bold">IAHI</span>
         <div className="text-muted-foreground flex items-center font-medium md:justify-center gap-8">
           {navigationData.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="hover:text-primary max-md:hidden text-sm font-normal"
+              className="hover:text-primary max-md:hidden text-base font-normal"
               activeProps={{ className: "text-primary font-medium!" }}
             >
               {item.title}
@@ -53,7 +53,7 @@ const Navbar = () => {
           >
             <>
               <a href="/join-us">Join Us</a>
-              <ArrowRightIcon className="size-4 group-hover:-rotate-45  transition-transform duration-300" />
+              <ArrowRightIcon className="size-4 group-hover:-rotate-45 transition-transform duration-300" />
             </>
           </Button>
           <Sheet>
