@@ -133,7 +133,7 @@ export function ExpertsCarousel() {
                       </div>
                     </div>
 
-                    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-white/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
+                    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-white/95 px-3 py-1.5 dark:bg-black/60 text-xs font-semibold text-foreground shadow-sm">
                       <MicroscopeIcon className="size-3.5 text-primary" />
                       {expert.specialization}
                     </div>
