@@ -1,6 +1,7 @@
 import { AgendaSection } from "@/components/home/agenda-section";
 import { ExpertsCarousel } from "@/components/home/experts-carousel";
 import { HeroSection } from "@/components/home/hero-section";
+import { PublicationsSection } from "@/components/home/publications-section";
 import AboutUs from "@/components/home/about-us";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -25,6 +26,7 @@ function App() {
       <ExpertsCarousel />
       <AgendaSection />
       <AboutUs />
+      <PublicationsSection />
     </main>
   );
 }
