@@ -27,32 +27,36 @@ const navigationData: NavigationItem[] = [
   { title: "Contact Us", href: "/contact-us" },
 ];
 
+/** Desktop inline nav starts at `lg` so tablets (e.g. iPad mini) keep the mobile sheet. */
 const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 lg:px-0">
-        <span className="text-xl font-bold tracking-tight md:text-2xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-0">
+        <span className="text-xl font-bold tracking-tight lg:text-2xl">
           IAHI
         </span>
-        <div className="flex items-center gap-8 font-medium text-muted-foreground md:justify-center">
+        <nav
+          className="hidden flex-1 items-center justify-center gap-6 font-medium text-muted-foreground lg:flex xl:gap-8"
+          aria-label="Main"
+        >
           {navigationData.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="inline-flex min-h-10 items-center px-1 text-base font-normal hover:text-primary max-md:hidden"
+              className="inline-flex min-h-10 items-center px-1 text-base font-normal hover:text-primary"
               activeProps={{ className: "text-primary font-medium!" }}
             >
               {item.title}
             </Link>
           ))}
-        </div>
+        </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
           <Button
             asChild
             size="default"
-            className="group hidden h-10 min-h-10 px-3.5 hover:cursor-pointer md:inline-flex"
+            className="group hidden h-10 min-h-10 px-3.5 hover:cursor-pointer lg:inline-flex"
           >
             <a
               href="/join-us"
@@ -70,7 +74,7 @@ const Navbar = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-11 min-h-11 min-w-11 md:hidden"
+                className="h-11 min-h-11 min-w-11 lg:hidden"
                 aria-label="Open menu"
               >
                 <MenuIcon className="size-5" />
