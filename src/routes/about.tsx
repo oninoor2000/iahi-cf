@@ -1,3 +1,4 @@
+import { AboutPage } from "@/components/about/about-page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/about")({
@@ -7,21 +8,13 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Learn more about the Indonesian Association of Health Informatics (IAHI).",
+          "Background, vision, mission, membership, and governance of the Indonesian Association of Health Informatics (IAHI), established 2005 in Jakarta.",
       },
     ],
   }),
-  component: AboutPage,
+  component: AboutRoute,
 });
 
-function AboutPage() {
-  return (
-    <main className="page-wrap px-4 pt-10 pb-12">
-      <h1 className="text-3xl font-semibold text-foreground">About</h1>
-      <p className="mt-3 text-muted-foreground">
-        This page is under development. Organization background, vision,
-        mission, and governance details will be added soon.
-      </p>
-    </main>
-  );
+function AboutRoute() {
+  return <AboutPage />;
 }
