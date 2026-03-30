@@ -158,7 +158,7 @@ export function AboutPage() {
 
               <motion.div
                 variants={fadeUp}
-                className="mt-12 overflow-hidden rounded-2xl border border-border/50"
+                className="mt-12 overflow-hidden border border-border/50"
               >
                 <img
                   src={picsumWide("iahi-about-hero")}
