@@ -30,14 +30,16 @@ const navigationData: NavigationItem[] = [
 const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 lg:px-0">
-        <span className="text-2xl font-bold">IAHI</span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 lg:px-0">
+        <span className="text-xl font-bold tracking-tight md:text-2xl">
+          IAHI
+        </span>
         <div className="flex items-center gap-8 font-medium text-muted-foreground md:justify-center">
           {navigationData.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="text-base font-normal hover:text-primary max-md:hidden"
+              className="inline-flex min-h-10 items-center px-1 text-base font-normal hover:text-primary max-md:hidden"
               activeProps={{ className: "text-primary font-medium!" }}
             >
               {item.title}
@@ -48,20 +50,27 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button
+            asChild
             size="default"
-            className="group hidden px-4 py-2 hover:cursor-pointer md:inline-flex"
+            className="group hidden h-10 min-h-10 px-3.5 hover:cursor-pointer md:inline-flex"
           >
-            <>
-              <a href="/join-us">Join Us</a>
-              <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:-rotate-45" />
-            </>
+            <a
+              href="/join-us"
+              className="inline-flex items-center gap-1.5 text-base"
+            >
+              Join Us
+              <ArrowRightIcon
+                className="size-4 shrink-0 transition-transform duration-300 group-hover:-rotate-45"
+                aria-hidden
+              />
+            </a>
           </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="md:hidden"
+                className="h-11 min-h-11 min-w-11 md:hidden"
                 aria-label="Open menu"
               >
                 <MenuIcon className="size-5" />
@@ -85,7 +94,7 @@ const Navbar = () => {
                         <SheetClose asChild>
                           <a
                             href={item.href}
-                            className="block rounded-md px-4 py-3 text-base font-medium transition duration-200 hover:bg-accent"
+                            className="flex min-h-10 items-center rounded-md px-4 py-2.5 text-base font-medium transition duration-200 hover:bg-accent"
                           >
                             {item.title}
                           </a>
@@ -96,12 +105,22 @@ const Navbar = () => {
                 </nav>
                 <div className="data-[state=open]:animate-in data-[state=open]:fade-in-0 mt-auto border-t px-2 pt-4 data-[state=open]:duration-300">
                   <SheetClose asChild>
-                    <a href="/join-us" className="block">
-                      <Button size="default" className="group w-full">
+                    <Button
+                      asChild
+                      size="default"
+                      className="group h-10 min-h-10 w-full"
+                    >
+                      <a
+                        href="/join-us"
+                        className="inline-flex items-center justify-center gap-1.5"
+                      >
                         Join Us
-                        <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:-rotate-45" />
-                      </Button>
-                    </a>
+                        <ArrowRightIcon
+                          className="size-4 shrink-0 transition-transform duration-300 group-hover:-rotate-45"
+                          aria-hidden
+                        />
+                      </a>
+                    </Button>
                   </SheetClose>
                 </div>
               </div>

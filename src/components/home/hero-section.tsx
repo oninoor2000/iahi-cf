@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "lucide-react";
+import { CalendarDaysIcon } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -111,7 +111,10 @@ export function HeroSection() {
               className="group/button h-11 w-full cursor-pointer px-4 text-sm font-normal sm:h-12 sm:w-auto sm:text-base"
             >
               Check Our Events
-              <ArrowRightIcon className="ml-2 size-4 origin-center transform-gpu font-medium transition-transform duration-300 group-hover/button:-rotate-45" />
+              <CalendarDaysIcon
+                className="ml-2 size-4 shrink-0 transition-transform duration-300 group-hover/button:scale-110 motion-reduce:group-hover/button:scale-100"
+                aria-hidden
+              />
             </Button>
 
             <Button
