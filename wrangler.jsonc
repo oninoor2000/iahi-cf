@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "iahi",
+  "name": "iahi-cf",
   // Set this to today's date
   "compatibility_date": "2026-03-17",
   "compatibility_flags": ["nodejs_compat"],
