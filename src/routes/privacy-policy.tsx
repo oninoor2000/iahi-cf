@@ -15,7 +15,7 @@ export const Route = createFileRoute("/privacy-policy")({
 
 function PrivacyPolicyPage() {
   return (
-    <main className="page-wrap px-4 pb-12 pt-10">
+    <main className="page-wrap px-4 pt-10 pb-12">
       <h1 className="text-3xl font-semibold text-foreground">Privacy Policy</h1>
       <p className="mt-3 text-muted-foreground">
         This page is under development. Data usage, privacy rights, and

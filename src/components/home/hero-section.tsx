@@ -48,7 +48,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="px-4 pb-10 pt-10 sm:pb-12 sm:pt-14">
+    <section className="px-4 pt-10 pb-10 sm:pt-14 sm:pb-12">
       <div className="mx-auto max-w-6xl">
         <motion.div
           className="flex flex-col"
@@ -65,7 +65,7 @@ export function HeroSection() {
                 {avatars.map((avatar, index) => (
                   <Avatar
                     key={avatar.src}
-                    className="-ml-1.5 size-7 first:ml-0 ring-2 ring-background"
+                    className="-ml-1.5 size-7 ring-2 ring-background first:ml-0"
                     style={{ zIndex: avatars.length - index }}
                   >
                     <AvatarImage src={avatar.src} alt={avatar.alt} />
@@ -83,7 +83,7 @@ export function HeroSection() {
 
           <motion.h1
             variants={fadeUp}
-            className="mt-6 text-4xl leading-tight font-medium text-center text-foreground md:text-left sm:mt-8 sm:text-5xl lg:text-6xl lg:leading-16"
+            className="mt-6 text-center font-open-sans text-4xl leading-tight font-medium text-foreground sm:mt-8 sm:text-5xl md:text-left lg:text-6xl lg:leading-16"
           >
             Shaping Indonesia&apos;s{" "}
             <span className="text-primary">
@@ -94,11 +94,12 @@ export function HeroSection() {
 
           <motion.p
             variants={fadeUp}
-            className="mt-4 text-sm text-center text-foreground md:text-left sm:mt-6 sm:text-base"
+            className="mt-4 text-center text-sm text-foreground sm:mt-6 sm:text-base md:text-left"
           >
-            A professional organization dedicated to communication, collaboration,
-            and <br className="hidden sm:block" /> scientific development across
-            medicine, public health, and information technology.
+            A professional organization dedicated to communication,
+            collaboration, and <br className="hidden sm:block" /> scientific
+            development across medicine, public health, and information
+            technology.
           </motion.p>
 
           <motion.div
@@ -107,16 +108,16 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="group/button h-11 w-full px-4 text-sm font-normal cursor-pointer sm:h-12 sm:w-auto sm:text-base"
+              className="group/button h-11 w-full cursor-pointer px-4 text-sm font-normal sm:h-12 sm:w-auto sm:text-base"
             >
               Check Our Events
-              <ArrowRightIcon className="size-4 origin-center transform-gpu transition-transform duration-300 group-hover/button:-rotate-45 ml-2 font-medium" />
+              <ArrowRightIcon className="ml-2 size-4 origin-center transform-gpu font-medium transition-transform duration-300 group-hover/button:-rotate-45" />
             </Button>
 
             <Button
               size="lg"
               variant="outline"
-              className="h-11 w-full px-4 text-sm font-normal cursor-pointer sm:h-12 sm:w-auto sm:text-base"
+              className="h-11 w-full cursor-pointer px-4 text-sm font-normal sm:h-12 sm:w-auto sm:text-base"
             >
               Contact Us
             </Button>

@@ -1,11 +1,12 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import Footer from "../components/Footer";
-import Header from "../components/sections/header";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+
 import { ThemeProvider } from "../components/providers/theme-provider";
 
 import appCss from "../styles.css?url";
+import Footer from "@/components/sections/footer";
+import Header from "../components/sections/header";
 
 const THEME_INIT_SCRIPT = `(function(){try{var key='iahi-theme';var cookie=document.cookie.match(new RegExp('(?:^|; )'+key+'=([^;]*)'));var cookieMode=cookie?decodeURIComponent(cookie[1]):null;var stored=window.localStorage.getItem(key);var mode=(stored==='light'||stored==='dark'||stored==='system')?stored:((cookieMode==='light'||cookieMode==='dark'||cookieMode==='system')?cookieMode:'system');var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='system'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='system'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`;
 
@@ -41,7 +42,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
         <ThemeProvider>
           <Header />
           {children}

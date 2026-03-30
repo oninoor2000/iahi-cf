@@ -29,15 +29,15 @@ const navigationData: NavigationItem[] = [
 
 const Navbar = () => {
   return (
-    <header className="bg-background sticky top-0 z-50 border-b border-border/50">
-      <div className="flex max-w-6xl mx-auto items-center justify-between py-5 px-4 md:px-0">
+    <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 lg:px-0">
         <span className="text-2xl font-bold">IAHI</span>
-        <div className="text-muted-foreground flex items-center font-medium md:justify-center gap-8">
+        <div className="flex items-center gap-8 font-medium text-muted-foreground md:justify-center">
           {navigationData.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="hover:text-primary max-md:hidden text-base font-normal"
+              className="text-base font-normal hover:text-primary max-md:hidden"
               activeProps={{ className: "text-primary font-medium!" }}
             >
               {item.title}
@@ -53,7 +53,7 @@ const Navbar = () => {
           >
             <>
               <a href="/join-us">Join Us</a>
-              <ArrowRightIcon className="size-4 group-hover:-rotate-45 transition-transform duration-300" />
+              <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:-rotate-45" />
             </>
           </Button>
           <Sheet>
@@ -77,9 +77,9 @@ const Navbar = () => {
                   Indonesian Association of Health Informatics
                 </SheetDescription>
               </SheetHeader>
-              <div className="flex h-full flex-col overflow-y-auto px-3 py-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:duration-300">
+              <div className="data-[state=open]:animate-in data-[state=open]:fade-in-0 flex h-full flex-col overflow-y-auto px-3 py-4 data-[state=open]:duration-300">
                 <nav aria-label="Mobile navigation">
-                  <ul className="space-y-1 data-[state=open]:animate-in data-[state=open]:slide-in-from-right-2 data-[state=open]:duration-300">
+                  <ul className="data-[state=open]:animate-in data-[state=open]:slide-in-from-right-2 space-y-1 data-[state=open]:duration-300">
                     {navigationData.map((item) => (
                       <li key={item.href}>
                         <SheetClose asChild>
@@ -94,7 +94,7 @@ const Navbar = () => {
                     ))}
                   </ul>
                 </nav>
-                <div className="mt-auto border-t px-2 pt-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:duration-300">
+                <div className="data-[state=open]:animate-in data-[state=open]:fade-in-0 mt-auto border-t px-2 pt-4 data-[state=open]:duration-300">
                   <SheetClose asChild>
                     <a href="/join-us" className="block">
                       <Button size="default" className="group w-full">

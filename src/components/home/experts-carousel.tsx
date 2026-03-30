@@ -97,7 +97,7 @@ export function ExpertsCarousel() {
 
   return (
     <motion.section
-      className="pb-12 pt-2 sm:pb-16"
+      className="pt-2 pb-12 sm:pb-16"
       initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.12 }}
@@ -124,10 +124,10 @@ export function ExpertsCarousel() {
               {EXPERTS.map((expert) => (
                 <CarouselItem
                   key={expert.id}
-                  className="pl-8 basis-[84%] sm:basis-[58%] md:basis-[42%] lg:basis-[27.5%]"
+                  className="basis-[84%] pl-8 sm:basis-[58%] md:basis-[42%] lg:basis-[27.5%]"
                 >
                   <article
-                    className={`group relative h-[400px] md:h-[440px] overflow-hidden ${expert.cardClassName}`}
+                    className={`group relative h-[400px] overflow-hidden md:h-[440px] ${expert.cardClassName}`}
                   >
                     <img
                       src={expert.imageUrl}
@@ -138,14 +138,14 @@ export function ExpertsCarousel() {
 
                     <div className="absolute inset-x-0 top-0 p-3">
                       <div className="inline-flex max-w-[92%] flex-col rounded-md bg-black/60 px-2.5 py-2 text-xs text-white backdrop-blur-sm">
-                        <p className="font-semibold leading-tight">
+                        <p className="leading-tight font-semibold">
                           {expert.name}
                         </p>
                         <p className="text-white/90">{expert.role}</p>
                       </div>
                     </div>
 
-                    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-white/95 px-3 py-1.5 dark:bg-black/60 text-xs font-semibold text-foreground shadow-sm">
+                    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-white/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm dark:bg-black/60">
                       <MicroscopeIcon className="size-3.5 text-primary" />
                       {expert.specialization}
                     </div>

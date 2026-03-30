@@ -6,7 +6,8 @@ export const Route = createFileRoute("/agenda")({
       { title: "Agenda | IAHI" },
       {
         name: "description",
-        content: "View upcoming events, workshops, and forum activities by IAHI.",
+        content:
+          "View upcoming events, workshops, and forum activities by IAHI.",
       },
     ],
   }),
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/agenda")({
 
 function AgendaPage() {
   return (
-    <main className="page-wrap px-4 pb-12 pt-10">
+    <main className="page-wrap px-4 pt-10 pb-12">
       <h1 className="text-3xl font-semibold text-foreground">Agenda</h1>
       <p className="mt-3 text-muted-foreground">
         This page is under development. Upcoming events, schedules, and

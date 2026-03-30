@@ -1,5 +1,6 @@
 import { ExpertsCarousel } from "@/components/home/experts-carousel";
 import { HeroSection } from "@/components/home/hero-section";
+import AboutUs from "@/components/home/about-us";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -21,6 +22,7 @@ function App() {
     <main>
       <HeroSection />
       <ExpertsCarousel />
+      <AboutUs />
     </main>
   );
 }

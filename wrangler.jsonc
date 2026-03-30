@@ -30,8 +30,7 @@
    *   wrangler secret put SMTP_PASS
    */
   "vars": {
-    "VITE_APP_URL": "https://iahi.flaener.workers.dev",
-    "VITE_CLERK_PUBLISHABLE_KEY": "pk_test_aW50ZWdyYWwtYnVubnktOTIuY2xlcmsuYWNjb3VudHMuZGV2JA",
+    "VITE_APP_URL": "https://iahi-cf.flaener.workers.dev",
     "SMTP_FROM_NAME": "IAHI - Perhimpunan Informatika Kesehatan Indonesia",
   },
 }

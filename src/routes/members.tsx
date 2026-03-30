@@ -6,7 +6,8 @@ export const Route = createFileRoute("/members")({
       { title: "Members | IAHI" },
       {
         name: "description",
-        content: "Membership categories, benefits, and registration information.",
+        content:
+          "Membership categories, benefits, and registration information.",
       },
     ],
   }),
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/members")({
 
 function MembersPage() {
   return (
-    <main className="page-wrap px-4 pb-12 pt-10">
+    <main className="page-wrap px-4 pt-10 pb-12">
       <h1 className="text-3xl font-semibold text-foreground">Members</h1>
       <p className="mt-3 text-muted-foreground">
         This page is under development. Membership categories, eligibility, and

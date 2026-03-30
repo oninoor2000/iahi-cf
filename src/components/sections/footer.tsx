@@ -23,9 +23,7 @@ export default function Footer() {
   return (
     <motion.footer
       className="bg-sidebar text-sidebar-foreground"
-      initial={
-        reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }
-      }
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{
@@ -38,20 +36,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground">
                 IAHI
               </div>
               <div>
-                <p className="text-xs font-semibold text-sidebar-foreground/80 leading-tight">
+                <p className="text-xs leading-tight font-semibold text-sidebar-foreground/80">
                   Perhimpunan Informatika
                 </p>
-                <p className="text-xs font-semibold text-sidebar-foreground/80 leading-tight">
+                <p className="text-xs leading-tight font-semibold text-sidebar-foreground/80">
                   Kesehatan Indonesia
                 </p>
               </div>
             </div>
-            <p className="text-sm text-sidebar-foreground/80 leading-relaxed max-w-xs">
+            <p className="max-w-xs text-sm leading-relaxed text-sidebar-foreground/80">
               Independent and non-profit professional organization advancing
               health informatics through collaboration, scientific exchange, and
               institutional development in Indonesia.
@@ -60,7 +58,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="mb-4 text-sm font-semibold tracking-wider text-sidebar-foreground uppercase">
               Quick Links
             </h2>
             <ul className="space-y-2.5">
@@ -68,7 +66,7 @@ export default function Footer() {
                 <li key={href}>
                   <a
                     href={href}
-                    className="text-sm text-sidebar-foreground/80 hover:text-sidebar-primary transition-colors"
+                    className="text-sm text-sidebar-foreground/80 transition-colors hover:text-sidebar-primary"
                   >
                     {label}
                   </a>
@@ -79,7 +77,7 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="mb-4 text-sm font-semibold tracking-wider text-sidebar-foreground uppercase">
               Legal
             </h2>
             <ul className="space-y-2.5">
@@ -87,7 +85,7 @@ export default function Footer() {
                 <li key={href}>
                   <a
                     href={href}
-                    className="text-sm text-sidebar-foreground/80 hover:text-sidebar-primary transition-colors"
+                    className="text-sm text-sidebar-foreground/80 transition-colors hover:text-sidebar-primary"
                   >
                     {label}
                   </a>
@@ -98,19 +96,19 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h2 className="text-sm font-semibold text-sidebar-foreground mb-4 uppercase tracking-wider">
+            <h2 className="mb-4 text-sm font-semibold tracking-wider text-sidebar-foreground uppercase">
               Contact
             </h2>
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-sidebar-foreground/80">
-                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-sidebar-primary/70" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sidebar-primary/70" />
                 <span>Jakarta, Indonesia</span>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-sidebar-foreground/80">
                 <Mail className="h-4 w-4 shrink-0 text-sidebar-primary/70" />
                 <a
                   href="mailto:sekretariat@iahi.net"
-                  className="hover:text-sidebar-primary transition-colors"
+                  className="transition-colors hover:text-sidebar-primary"
                 >
                   sekretariat@iahi.net
                 </a>
@@ -122,8 +120,8 @@ export default function Footer() {
         <Separator className="bg-sidebar-border" />
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 text-xs text-sidebar-foreground/70">
-          <p>
+        <div className="flex flex-col items-center justify-between gap-3 py-6 text-xs text-sidebar-foreground/70 sm:flex-row">
+          <p className="text-center">
             &copy; {year} Indonesian Association of Health Informatics (IAHI).
             All rights reserved.
           </p>
