@@ -1,3 +1,4 @@
+import { AgendaListPage } from "@/components/agenda/agenda-list-page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/agenda")({
@@ -7,21 +8,13 @@ export const Route = createFileRoute("/agenda")({
       {
         name: "description",
         content:
-          "View upcoming events, workshops, and forum activities by IAHI.",
+          "IAHI event calendar: conferences, workshops, forums, and member gatherings—with dates, locations, and links to learn more or register.",
       },
     ],
   }),
-  component: AgendaPage,
+  component: AgendaRoute,
 });
 
-function AgendaPage() {
-  return (
-    <main className="page-wrap px-4 pt-10 pb-12">
-      <h1 className="text-3xl font-semibold text-foreground">Agenda</h1>
-      <p className="mt-3 text-muted-foreground">
-        This page is under development. Upcoming events, schedules, and
-        participation details will be published soon.
-      </p>
-    </main>
-  );
+function AgendaRoute() {
+  return <AgendaListPage />;
 }
