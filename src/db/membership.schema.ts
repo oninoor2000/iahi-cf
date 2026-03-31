@@ -7,6 +7,7 @@ export const MEMBERSHIP_STATUS = {
   PENDING_PAYMENT: "pending_payment",
   PENDING_REVIEW: "pending_review",
   ACTIVE: "active",
+  NEEDS_CORRECTION: "needs_correction",
   REJECTED: "rejected",
   EXPIRED: "expired",
   CANCELLED: "cancelled",
@@ -81,6 +82,7 @@ export const membership = sqliteTable(
     contactPerson: text("contact_person"),
     cardVersion: integer("card_version").notNull().default(1),
     revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
+    deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
       .notNull(),

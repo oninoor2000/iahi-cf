@@ -1,13 +1,14 @@
 import {
   MEMBERSHIP_STATUS,
   PAYMENT_PROOF_STATUS,
+  membershipTier as membershipTierTable,
   membership as membershipTable,
   membershipPayment as membershipPaymentTable,
 } from "@/db/membership.schema";
 import { user as userTable } from "@/db/auth.schema";
 import { isActiveMembership } from "@/lib/membership";
 import { createServerFn } from "@tanstack/react-start";
-import { desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like, or, sql } from "drizzle-orm";
 import type { MembershipStatus } from "@/db/membership.schema";
 import { getInfrequentR2Binding } from "@/server/api/env.server";
 import { INDONESIA_PROVINCES } from "@/lib/indonesia-provinces";
@@ -62,6 +63,210 @@ const membershipApplicantInputSchema = z.object({
 export type MembershipApplicantInput = z.infer<
   typeof membershipApplicantInputSchema
 >;
+export const membershipResubmitRejectedInputSchema = membershipApplicantInputSchema;
+export type MembershipResubmitRejectedInput = z.infer<
+  typeof membershipResubmitRejectedInputSchema
+>;
+
+const membershipStatusValues = [
+  MEMBERSHIP_STATUS.PENDING_PAYMENT,
+  MEMBERSHIP_STATUS.PENDING_REVIEW,
+  MEMBERSHIP_STATUS.ACTIVE,
+  MEMBERSHIP_STATUS.NEEDS_CORRECTION,
+  MEMBERSHIP_STATUS.REJECTED,
+  MEMBERSHIP_STATUS.EXPIRED,
+  MEMBERSHIP_STATUS.CANCELLED,
+] as const;
+
+export const membershipAdminListFilterSchema = z
+  .object({
+    search: z.string().trim().optional(),
+    status: z.enum(membershipStatusValues).optional(),
+    institutionType: z.enum(["individu", "institusi"]).optional(),
+    province: z.enum(INDONESIA_PROVINCES).optional(),
+    hasPaymentProof: z.boolean().optional(),
+    includeDeleted: z.boolean().optional(),
+    appliedFrom: z.string().datetime().optional(),
+    appliedTo: z.string().datetime().optional(),
+    page: z.number().int().positive().optional(),
+    pageSize: z.number().int().positive().max(100).optional(),
+    sortBy: z.enum(["appliedAt", "updatedAt", "userName", "status"]).optional(),
+    sortOrder: z.enum(["asc", "desc"]).optional(),
+  })
+  .strict();
+export type MembershipAdminListFilterInput = z.input<
+  typeof membershipAdminListFilterSchema
+>;
+
+export const membershipAdminCreateInputSchema = membershipApplicantInputSchema
+  .extend({
+    userId: z.string().trim().min(1),
+    status: z
+      .enum([
+        MEMBERSHIP_STATUS.PENDING_PAYMENT,
+        MEMBERSHIP_STATUS.PENDING_REVIEW,
+        MEMBERSHIP_STATUS.ACTIVE,
+        MEMBERSHIP_STATUS.NEEDS_CORRECTION,
+        MEMBERSHIP_STATUS.REJECTED,
+      ])
+      .optional(),
+    tierId: z.string().trim().optional().nullable(),
+    notes: z.string().trim().max(2000).optional().nullable(),
+  })
+  .strict();
+export type MembershipAdminCreateInput = z.infer<
+  typeof membershipAdminCreateInputSchema
+>;
+
+export const membershipAdminUpdateInputSchema = membershipApplicantInputSchema
+  .partial()
+  .extend({
+    membershipId: z.string().trim().min(1),
+    status: z.enum(membershipStatusValues).optional(),
+    tierId: z.string().trim().optional().nullable(),
+    notes: z.string().trim().max(2000).optional().nullable(),
+    rejectionReason: z.string().trim().max(2000).optional().nullable(),
+  })
+  .strict();
+export type MembershipAdminUpdateInput = z.infer<
+  typeof membershipAdminUpdateInputSchema
+>;
+
+export const membershipAdminRevokeInputSchema = z
+  .object({
+    membershipId: z.string().trim().min(1),
+  })
+  .strict();
+export type MembershipAdminRevokeInput = z.infer<
+  typeof membershipAdminRevokeInputSchema
+>;
+
+const membershipAdminUserSearchSchema = z
+  .object({
+    search: z.string().trim().optional(),
+    limit: z.number().int().positive().max(50).optional(),
+  })
+  .strict();
+export type MembershipAdminUserSearchInput = z.input<
+  typeof membershipAdminUserSearchSchema
+>;
+
+export type MembershipAdminUserOption = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type MembershipAdminListItem = {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  status: MembershipStatus;
+  memberNumber: string | null;
+  appliedAt: string;
+  updatedAt: string;
+  validUntil: string | null;
+  tierId: string | null;
+  tierName: string | null;
+  profession: string | null;
+  phone: string | null;
+  address: string | null;
+  province: string | null;
+  institutionName: string | null;
+  institutionType: string | null;
+  contactPerson: string | null;
+  rejectionReason: string | null;
+  notes: string | null;
+  paymentProofUrl: string | null;
+  paymentProofFilename: string | null;
+  paymentStatus: string | null;
+  deletedAt: string | null;
+};
+
+export type MembershipAdminListResult = {
+  data: MembershipAdminListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+const membershipAdminBulkActionSchema = z
+  .object({
+    action: z.enum([
+      "approve",
+      "needs_correction",
+      "reject_final",
+      "reject",
+      "delete",
+      "set_pending_review",
+      "set_pending_payment",
+      "set_active",
+    ]),
+    reviewerNote: z.string().trim().max(2000).optional(),
+    target: z
+      .object({
+        mode: z.literal("selected_ids"),
+        ids: z.array(z.string().min(1)).min(1),
+      })
+      .strict(),
+  })
+  .strict();
+export type MembershipAdminBulkActionInput = z.infer<
+  typeof membershipAdminBulkActionSchema
+>;
+
+function normalizePagination(filters: MembershipAdminListFilterInput): {
+  page: number;
+  pageSize: number;
+} {
+  return {
+    page: filters.page ?? 1,
+    pageSize: filters.pageSize ?? 10,
+  };
+}
+
+function buildMembershipAdminWhereClause(filters: MembershipAdminListFilterInput) {
+  const appliedFrom = filters.appliedFrom ? new Date(filters.appliedFrom) : undefined;
+  const appliedTo = filters.appliedTo ? new Date(filters.appliedTo) : undefined;
+  return and(
+    filters.status ? eq(membershipTable.status, filters.status) : undefined,
+    filters.institutionType
+      ? eq(membershipTable.institutionType, filters.institutionType)
+      : undefined,
+    filters.province ? eq(membershipTable.province, filters.province) : undefined,
+    appliedFrom ? sql`${membershipTable.appliedAt} >= ${appliedFrom}` : undefined,
+    appliedTo ? sql`${membershipTable.appliedAt} <= ${appliedTo}` : undefined,
+    filters.hasPaymentProof === true
+      ? sql`exists (
+            select 1
+            from membership_payment mp
+            where mp.membership_id = ${membershipTable.id}
+              and mp.proof_object_key is not null
+          )`
+      : undefined,
+    filters.hasPaymentProof === false
+      ? sql`not exists (
+            select 1
+            from membership_payment mp
+            where mp.membership_id = ${membershipTable.id}
+              and mp.proof_object_key is not null
+          )`
+      : undefined,
+    filters.includeDeleted ? undefined : sql`${membershipTable.deletedAt} is null`,
+    filters.search
+      ? or(
+          like(sql`lower(${userTable.name})`, `%${filters.search.toLowerCase()}%`),
+          like(sql`lower(${userTable.email})`, `%${filters.search.toLowerCase()}%`),
+          like(
+            sql`lower(${membershipTable.memberNumber})`,
+            `%${filters.search.toLowerCase()}%`,
+          ),
+        )
+      : undefined,
+  );
+}
 
 export type MembershipJoinGuide = {
   accountName: string;
@@ -193,7 +398,11 @@ export const createMembershipApplicationFn = createServerFn({ method: "POST" })
         .orderBy(desc(membershipTable.appliedAt))
         .limit(1);
 
-      if (existing && existing.status !== MEMBERSHIP_STATUS.REJECTED) {
+      if (
+        existing &&
+        existing.status !== MEMBERSHIP_STATUS.REJECTED &&
+        existing.status !== MEMBERSHIP_STATUS.CANCELLED
+      ) {
         return { membershipId: existing.id, reused: true };
       }
 
@@ -214,6 +423,87 @@ export const createMembershipApplicationFn = createServerFn({ method: "POST" })
       });
 
       return { membershipId, reused: false };
+    },
+  );
+
+export const resubmitRejectedMembershipFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireVerifiedMiddleware,
+  ])
+  .inputValidator(membershipResubmitRejectedInputSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipResubmitRejectedInput;
+      context: DbAuthContext;
+    }) => {
+      const { db, user } = context;
+      const [existing] = await db
+        .select({
+          id: membershipTable.id,
+          status: membershipTable.status,
+        })
+        .from(membershipTable)
+        .where(eq(membershipTable.userId, user.id))
+        .orderBy(desc(membershipTable.appliedAt))
+        .limit(1);
+
+      if (!existing || existing.status !== MEMBERSHIP_STATUS.NEEDS_CORRECTION) {
+        throw new Error("No membership request requires correction");
+      }
+
+      const paymentRows = await db
+        .select({
+          id: membershipPaymentTable.id,
+          proofObjectKey: membershipPaymentTable.proofObjectKey,
+        })
+        .from(membershipPaymentTable)
+        .where(eq(membershipPaymentTable.membershipId, existing.id));
+
+      const hasPaymentProof = paymentRows.some((row) => Boolean(row.proofObjectKey));
+      const nextStatus = hasPaymentProof
+        ? MEMBERSHIP_STATUS.PENDING_REVIEW
+        : MEMBERSHIP_STATUS.PENDING_PAYMENT;
+
+      await db
+        .update(membershipTable)
+        .set({
+          status: nextStatus,
+          profession: data.profession,
+          phone: data.phone,
+          address: data.address,
+          province: data.province,
+          institutionName: data.institutionName,
+          institutionType: data.institutionType,
+          contactPerson: data.contactPerson,
+          rejectionReason: null,
+          reviewedAt: null,
+          reviewedByUserId: null,
+        })
+        .where(eq(membershipTable.id, existing.id));
+
+      if (hasPaymentProof) {
+        await db
+          .update(membershipPaymentTable)
+          .set({
+            status: PAYMENT_PROOF_STATUS.PENDING,
+            reviewedAt: null,
+            reviewerUserId: null,
+            reviewerNote: null,
+          })
+          .where(eq(membershipPaymentTable.membershipId, existing.id));
+      }
+
+      return {
+        membershipId: existing.id,
+        status: nextStatus,
+        hasPaymentProof,
+      };
     },
   );
 
@@ -294,6 +584,482 @@ export const uploadMembershipProofFn = createServerFn({ method: "POST" })
         .where(eq(membershipTable.id, membership.id));
 
       return { ok: true };
+    },
+  );
+
+export const listAdminMembershipsFn = createServerFn({ method: "GET" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminListFilterSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminListFilterInput;
+      context: DbAuthContext;
+    }): Promise<MembershipAdminListResult> => {
+      const { db } = context;
+      const filters = data ?? {};
+      const { page, pageSize } = normalizePagination(filters);
+      const whereClause = buildMembershipAdminWhereClause(filters);
+
+      const totalRows = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(membershipTable)
+        .innerJoin(userTable, eq(userTable.id, membershipTable.userId))
+        .where(whereClause);
+      const total = Number(totalRows[0]?.count ?? 0);
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      const safePage = Math.min(page, totalPages);
+
+      const rows = await db
+        .select({
+          id: membershipTable.id,
+          userId: membershipTable.userId,
+          status: membershipTable.status,
+          memberNumber: membershipTable.memberNumber,
+          appliedAt: membershipTable.appliedAt,
+          updatedAt: membershipTable.updatedAt,
+          validUntil: membershipTable.validUntil,
+          tierId: membershipTable.tierId,
+          tierName: membershipTierTable.name,
+          profession: membershipTable.profession,
+          phone: membershipTable.phone,
+          address: membershipTable.address,
+          province: membershipTable.province,
+          institutionName: membershipTable.institutionName,
+          institutionType: membershipTable.institutionType,
+          contactPerson: membershipTable.contactPerson,
+          rejectionReason: membershipTable.rejectionReason,
+          notes: membershipTable.notes,
+          deletedAt: membershipTable.deletedAt,
+          userName: userTable.name,
+          userEmail: userTable.email,
+        })
+        .from(membershipTable)
+        .innerJoin(userTable, eq(userTable.id, membershipTable.userId))
+        .leftJoin(
+          membershipTierTable,
+          eq(membershipTierTable.id, membershipTable.tierId),
+        )
+        .where(whereClause)
+        .orderBy(
+          filters.sortBy === "userName"
+            ? filters.sortOrder === "asc"
+              ? asc(userTable.name)
+              : desc(userTable.name)
+            : filters.sortBy === "status"
+              ? filters.sortOrder === "asc"
+                ? asc(membershipTable.status)
+                : desc(membershipTable.status)
+              : filters.sortBy === "updatedAt"
+                ? filters.sortOrder === "asc"
+                  ? asc(membershipTable.updatedAt)
+                  : desc(membershipTable.updatedAt)
+                : filters.sortOrder === "asc"
+                  ? asc(membershipTable.appliedAt)
+                  : desc(membershipTable.appliedAt),
+        )
+        .limit(pageSize)
+        .offset((safePage - 1) * pageSize);
+
+      const dataRows: MembershipAdminListItem[] = [];
+      for (const row of rows) {
+        const [payment] = await db
+          .select({
+            proofObjectKey: membershipPaymentTable.proofObjectKey,
+            originalFilename: membershipPaymentTable.originalFilename,
+            status: membershipPaymentTable.status,
+          })
+          .from(membershipPaymentTable)
+          .where(eq(membershipPaymentTable.membershipId, row.id))
+          .orderBy(desc(membershipPaymentTable.submittedAt))
+          .limit(1);
+
+        dataRows.push({
+          id: row.id,
+          userId: row.userId,
+          userName: row.userName,
+          userEmail: row.userEmail,
+          status: row.status as MembershipStatus,
+          memberNumber: row.memberNumber,
+          appliedAt: new Date(row.appliedAt).toISOString(),
+          updatedAt: new Date(row.updatedAt).toISOString(),
+          validUntil: row.validUntil ? new Date(row.validUntil).toISOString() : null,
+          tierId: row.tierId,
+          tierName: row.tierName,
+          profession: row.profession,
+          phone: row.phone,
+          address: row.address,
+          province: row.province,
+          institutionName: row.institutionName,
+          institutionType: row.institutionType,
+          contactPerson: row.contactPerson,
+          rejectionReason: row.rejectionReason,
+          notes: row.notes,
+          deletedAt: row.deletedAt ? new Date(row.deletedAt).toISOString() : null,
+          paymentProofUrl: payment?.proofObjectKey
+            ? `/api/proofs/${encodeURIComponent(payment.proofObjectKey)}`
+            : null,
+          paymentProofFilename: payment?.originalFilename ?? null,
+          paymentStatus: payment?.status ?? null,
+        });
+      }
+
+      return {
+        data: dataRows,
+        total,
+        page: safePage,
+        pageSize,
+        totalPages,
+      };
+    },
+  );
+
+export const bulkActionMembershipAdminFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminBulkActionSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminBulkActionInput;
+      context: DbAuthContext;
+    }): Promise<{ affectedCount: number; affectedIds: string[] }> => {
+      const { db, user: admin } = context;
+      const ids = [...new Set(data.target.ids)];
+      if (!ids.length) return { affectedCount: 0, affectedIds: [] };
+
+      const now = new Date();
+      if (data.action === "delete") {
+        await db
+          .update(membershipTable)
+          .set({
+            status: MEMBERSHIP_STATUS.CANCELLED,
+            revokedAt: now,
+            deletedAt: now,
+            reviewedAt: now,
+            reviewedByUserId: admin.id,
+          })
+          .where(inArray(membershipTable.id, ids));
+        return { affectedCount: ids.length, affectedIds: ids };
+      }
+
+      if (data.action === "approve" || data.action === "set_active") {
+        const validUntil = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+        for (const membershipId of ids) {
+          await db
+            .update(membershipTable)
+            .set({
+              status: MEMBERSHIP_STATUS.ACTIVE,
+              validFrom: now,
+              validUntil,
+              memberNumber: generateMemberNumber(),
+              reviewedAt: now,
+              reviewedByUserId: admin.id,
+            })
+            .where(eq(membershipTable.id, membershipId));
+        }
+        await db
+          .update(membershipPaymentTable)
+          .set({
+            status: PAYMENT_PROOF_STATUS.APPROVED,
+            reviewedAt: now,
+            reviewerUserId: admin.id,
+            reviewerNote: data.reviewerNote ?? null,
+          })
+          .where(inArray(membershipPaymentTable.membershipId, ids));
+        return { affectedCount: ids.length, affectedIds: ids };
+      }
+
+      if (data.action === "needs_correction") {
+        await db
+          .update(membershipTable)
+          .set({
+            status: MEMBERSHIP_STATUS.NEEDS_CORRECTION,
+            rejectionReason: data.reviewerNote ?? null,
+            reviewedAt: now,
+            reviewedByUserId: admin.id,
+          })
+          .where(inArray(membershipTable.id, ids));
+        await db
+          .update(membershipPaymentTable)
+          .set({
+            status: PAYMENT_PROOF_STATUS.REJECTED,
+            reviewedAt: now,
+            reviewerUserId: admin.id,
+            reviewerNote: data.reviewerNote ?? null,
+          })
+          .where(inArray(membershipPaymentTable.membershipId, ids));
+        return { affectedCount: ids.length, affectedIds: ids };
+      }
+
+      if (data.action === "reject" || data.action === "reject_final") {
+        await db
+          .update(membershipTable)
+          .set({
+            status: MEMBERSHIP_STATUS.REJECTED,
+            rejectionReason: data.reviewerNote ?? null,
+            reviewedAt: now,
+            reviewedByUserId: admin.id,
+          })
+          .where(inArray(membershipTable.id, ids));
+        await db
+          .update(membershipPaymentTable)
+          .set({
+            status: PAYMENT_PROOF_STATUS.REJECTED,
+            reviewedAt: now,
+            reviewerUserId: admin.id,
+            reviewerNote: data.reviewerNote ?? null,
+          })
+          .where(inArray(membershipPaymentTable.membershipId, ids));
+        return { affectedCount: ids.length, affectedIds: ids };
+      }
+
+      if (data.action === "set_pending_review") {
+        await db
+          .update(membershipTable)
+          .set({ status: MEMBERSHIP_STATUS.PENDING_REVIEW })
+          .where(inArray(membershipTable.id, ids));
+        return { affectedCount: ids.length, affectedIds: ids };
+      }
+
+      await db
+        .update(membershipTable)
+        .set({ status: MEMBERSHIP_STATUS.PENDING_PAYMENT })
+        .where(inArray(membershipTable.id, ids));
+      return { affectedCount: ids.length, affectedIds: ids };
+    },
+  );
+
+export const createMembershipAdminFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminCreateInputSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminCreateInput;
+      context: DbAuthContext;
+    }) => {
+      const membershipId = crypto.randomUUID();
+      const now = new Date();
+      const validFrom = data.status === MEMBERSHIP_STATUS.ACTIVE ? now : null;
+      const validUntil =
+        data.status === MEMBERSHIP_STATUS.ACTIVE
+          ? new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+          : null;
+
+      const { db } = context;
+      await db.insert(membershipTable).values({
+        id: membershipId,
+        userId: data.userId,
+        tierId: data.tierId ?? null,
+        status: data.status ?? MEMBERSHIP_STATUS.PENDING_PAYMENT,
+        appliedAt: now,
+        validFrom,
+        validUntil,
+        memberNumber:
+          data.status === MEMBERSHIP_STATUS.ACTIVE ? generateMemberNumber() : null,
+        profession: data.profession,
+        phone: data.phone,
+        address: data.address,
+        province: data.province,
+        institutionName: data.institutionName,
+        institutionType: data.institutionType,
+        contactPerson: data.contactPerson,
+        notes: data.notes ?? null,
+      });
+
+      return { membershipId };
+    },
+  );
+
+export const updateMembershipAdminFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminUpdateInputSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminUpdateInput;
+      context: DbAuthContext;
+    }) => {
+      const { db, user: admin } = context;
+      const [existing] = await db
+        .select({ id: membershipTable.id })
+        .from(membershipTable)
+        .where(eq(membershipTable.id, data.membershipId))
+        .limit(1);
+      if (!existing) throw new Error("Membership not found");
+
+      const now = new Date();
+      await db
+        .update(membershipTable)
+        .set({
+          status: data.status,
+          tierId: data.tierId,
+          notes: data.notes,
+          rejectionReason: data.rejectionReason,
+          profession: data.profession,
+          phone: data.phone,
+          address: data.address,
+          province: data.province,
+          institutionName: data.institutionName,
+          institutionType: data.institutionType,
+          contactPerson: data.contactPerson,
+          reviewedAt: data.status ? now : undefined,
+          reviewedByUserId: data.status ? admin.id : undefined,
+        })
+        .where(eq(membershipTable.id, data.membershipId));
+
+      return { ok: true };
+    },
+  );
+
+export const deleteMembershipAdminFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(
+    z
+      .object({
+        membershipId: z.string().trim().min(1),
+      })
+      .strict(),
+  )
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: { membershipId: string };
+      context: DbAuthContext;
+    }) => {
+      const { db, user: admin } = context;
+      const [existing] = await db
+        .select({ id: membershipTable.id })
+        .from(membershipTable)
+        .where(eq(membershipTable.id, data.membershipId))
+        .limit(1);
+      if (!existing) throw new Error("Membership not found");
+
+      await db
+        .update(membershipTable)
+        .set({
+          status: MEMBERSHIP_STATUS.CANCELLED,
+          revokedAt: new Date(),
+          deletedAt: new Date(),
+          reviewedAt: new Date(),
+          reviewedByUserId: admin.id,
+        })
+        .where(eq(membershipTable.id, data.membershipId));
+      return { ok: true };
+    },
+  );
+
+export const revokeMembershipAdminFn = createServerFn({ method: "POST" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminRevokeInputSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminRevokeInput;
+      context: DbAuthContext;
+    }): Promise<{ success: true; membershipId: string }> => {
+      const { db, user: admin } = context;
+      const [existing] = await db
+        .select({ id: membershipTable.id })
+        .from(membershipTable)
+        .where(eq(membershipTable.id, data.membershipId))
+        .limit(1);
+      if (!existing) throw new Error("Membership not found");
+
+      const now = new Date();
+      await db
+        .update(membershipTable)
+        .set({
+          status: MEMBERSHIP_STATUS.CANCELLED,
+          revokedAt: now,
+          reviewedAt: now,
+          reviewedByUserId: admin.id,
+        })
+        .where(eq(membershipTable.id, data.membershipId));
+
+      return { success: true, membershipId: data.membershipId };
+    },
+  );
+
+export const searchMembershipAdminUsersFn = createServerFn({ method: "GET" })
+  .middleware([
+    dbMiddleware,
+    sessionMiddleware,
+    requireAuthMiddleware,
+    requireAdminMiddleware,
+  ])
+  .inputValidator(membershipAdminUserSearchSchema)
+  .handler(
+    async ({
+      data,
+      context,
+    }: {
+      data: MembershipAdminUserSearchInput;
+      context: DbAuthContext;
+    }): Promise<{ data: MembershipAdminUserOption[] }> => {
+      const { db } = context;
+      const limit = data.limit ?? 20;
+      const search = data.search?.toLowerCase();
+      const rows = await db
+        .select({
+          id: userTable.id,
+          name: userTable.name,
+          email: userTable.email,
+        })
+        .from(userTable)
+        .where(
+          search
+            ? or(
+                like(sql`lower(${userTable.name})`, `%${search}%`),
+                like(sql`lower(${userTable.email})`, `%${search}%`),
+              )
+            : undefined,
+        )
+        .orderBy(asc(userTable.name))
+        .limit(limit);
+      return { data: rows };
     },
   );
 
@@ -396,7 +1162,7 @@ export const reviewMembershipFn = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
       membershipId: z.string().min(1),
-      decision: z.enum(["approve", "reject"]),
+      decision: z.enum(["approve", "needs_correction", "reject_final", "reject"]),
       reviewerNote: z.string().optional(),
     }),
   )
@@ -407,7 +1173,7 @@ export const reviewMembershipFn = createServerFn({ method: "POST" })
     }: {
       data: {
         membershipId: string;
-        decision: "approve" | "reject";
+        decision: "approve" | "needs_correction" | "reject_final" | "reject";
         reviewerNote?: string | undefined;
       };
       context: DbAuthContext;
@@ -416,14 +1182,43 @@ export const reviewMembershipFn = createServerFn({ method: "POST" })
       const [m] = await db
         .select({
           id: membershipTable.id,
+          status: membershipTable.status,
         })
         .from(membershipTable)
         .where(eq(membershipTable.id, data.membershipId))
         .limit(1);
       if (!m) throw new Error("Membership not found");
+      if (
+        m.status !== MEMBERSHIP_STATUS.PENDING_REVIEW &&
+        m.status !== MEMBERSHIP_STATUS.NEEDS_CORRECTION
+      ) {
+        throw new Error("This membership is not in a reviewable state");
+      }
 
       const now = new Date();
-      if (data.decision === "reject") {
+      if (data.decision === "needs_correction") {
+        await db
+          .update(membershipTable)
+          .set({
+            status: MEMBERSHIP_STATUS.NEEDS_CORRECTION,
+            rejectionReason: data.reviewerNote ?? null,
+            reviewedAt: now,
+            reviewedByUserId: admin.id,
+          })
+          .where(eq(membershipTable.id, m.id));
+        await db
+          .update(membershipPaymentTable)
+          .set({
+            status: PAYMENT_PROOF_STATUS.REJECTED,
+            reviewedAt: now,
+            reviewerUserId: admin.id,
+            reviewerNote: data.reviewerNote ?? null,
+          })
+          .where(eq(membershipPaymentTable.membershipId, m.id));
+        return { ok: true };
+      }
+
+      if (data.decision === "reject" || data.decision === "reject_final") {
         await db
           .update(membershipTable)
           .set({

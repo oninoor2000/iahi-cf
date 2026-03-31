@@ -79,6 +79,47 @@ function ProfileMembershipPage() {
     ? new Date(membershipData.membership.validUntil).toLocaleDateString()
     : "—";
 
+  const statusMeta = React.useMemo(() => {
+    if (status === "active") {
+      return {
+        badgeLabel: "Active",
+        badgeVariant: "default" as const,
+        ctaLabel: "Open verification page",
+        ctaHref: verifyUrl || "/members/verify",
+      };
+    }
+    if (status === "rejected") {
+      return {
+        badgeLabel: "Rejected (Final)",
+        badgeVariant: "destructive" as const,
+        ctaLabel: "View final decision",
+        ctaHref: "/membership/manage",
+      };
+    }
+    if (status === "needs_correction") {
+      return {
+        badgeLabel: "Needs correction",
+        badgeVariant: "destructive" as const,
+        ctaLabel: "Fix and resubmit request",
+        ctaHref: "/membership/manage",
+      };
+    }
+    if (status === "cancelled") {
+      return {
+        badgeLabel: "Revoked",
+        badgeVariant: "destructive" as const,
+        ctaLabel: "Apply membership again",
+        ctaHref: "/membership/manage",
+      };
+    }
+    return {
+      badgeLabel: "Not active",
+      badgeVariant: "outline" as const,
+      ctaLabel: "Join membership",
+      ctaHref: "/membership/manage",
+    };
+  }, [status, verifyUrl]);
+
   const truncateText = React.useCallback((value: string, max: number) => {
     const safe = value.trim();
     if (safe.length <= max) return safe;
@@ -90,9 +131,7 @@ function ProfileMembershipPage() {
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <CardTitle>Membership</CardTitle>
-          <Badge variant={isActive ? "default" : "outline"}>
-            {isActive ? "Active" : "Not active"}
-          </Badge>
+          <Badge variant={statusMeta.badgeVariant}>{statusMeta.badgeLabel}</Badge>
         </div>
       </CardHeader>
       <CardContent>
@@ -371,16 +410,16 @@ function ProfileMembershipPage() {
             </ul>
             {!isActive ? (
               <Button asChild className="mt-3 w-full">
-                <a href="/membership/manage">Join membership</a>
+                <a href={statusMeta.ctaHref}>{statusMeta.ctaLabel}</a>
               </Button>
             ) : (
               <Button variant="outline" className="mt-3 w-full" asChild>
                 <a
-                  href={verifyUrl || "/members/verify"}
+                  href={statusMeta.ctaHref}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Open verification page
+                  {statusMeta.ctaLabel}
                 </a>
               </Button>
             )}

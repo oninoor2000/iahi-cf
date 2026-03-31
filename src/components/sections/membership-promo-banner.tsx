@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { queryKeys } from "@/query/keys";
 import { getMyMembershipFn } from "@/server/api/membership.functions";
@@ -44,16 +43,6 @@ export default function MembershipPromoBanner() {
     !isCoolingDown;
 
   if (!signedIn || isSessionPending) return null;
-
-  if (membershipQuery.isPending && !isCoolingDown) {
-    return (
-      <div className="border-b border-border/50 bg-background">
-        <div className="mx-auto max-w-6xl px-4 py-2 lg:px-0">
-          <Skeleton className="h-9 w-full" />
-        </div>
-      </div>
-    );
-  }
 
   if (!shouldShow) return null;
 

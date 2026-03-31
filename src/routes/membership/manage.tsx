@@ -33,6 +33,7 @@ import {
   createMembershipApplicationFn,
   getMembershipJoinGuideFn,
   getMyMembershipFn,
+  resubmitRejectedMembershipFn,
   uploadMembershipProofFn,
 } from "@/server/api/membership.functions";
 import type { MembershipApplicantInput } from "@/server/api/membership.functions";
@@ -62,6 +63,7 @@ type ProvinceOption = {
   value: IndonesiaProvince;
   label: string;
 };
+type ApplicantFormErrors = Partial<Record<keyof ApplicantFormState, string>>;
 
 const INSTITUTION_TYPE_OPTIONS: ReadonlyArray<{
   value: InstitutionType;
@@ -99,6 +101,7 @@ function MembershipManagePage() {
   const [isResending, setIsResending] = React.useState(false);
   const [applicantForm, setApplicantForm] =
     React.useState<ApplicantFormState>(emptyApplicantForm);
+  const [formErrors, setFormErrors] = React.useState<ApplicantFormErrors>({});
 
   const guideQuery = useQuery({
     queryKey: queryKeys.membership.guide(),
@@ -114,10 +117,18 @@ function MembershipManagePage() {
 
   const currentMembership = membershipQuery.data?.membership;
   const needsConsent =
-    !currentMembership || currentMembership.status === "rejected";
+    !currentMembership ||
+    currentMembership.status === "needs_correction" ||
+    currentMembership.status === "cancelled";
 
   React.useEffect(() => {
-    if (!currentMembership || currentMembership.status !== "rejected") return;
+    if (
+      !currentMembership ||
+      (currentMembership.status !== "needs_correction" &&
+        currentMembership.status !== "cancelled")
+    ) {
+      return;
+    }
     setApplicantForm({
       profession: currentMembership.profession ?? "",
       phone: currentMembership.phone ?? "",
@@ -156,6 +167,27 @@ function MembershipManagePage() {
         err instanceof Error
           ? err.message
           : "Failed to submit membership request",
+      ),
+  });
+
+  const resubmitMutation = useMutation({
+    mutationFn: (data: MembershipApplicantInput) =>
+      resubmitRejectedMembershipFn({ data }),
+    onSuccess: async (res) => {
+      toast.success(
+        res.status === "pending_review"
+          ? "Your correction is submitted for re-review."
+          : "Your correction is saved. Continue with payment.",
+      );
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.membership.all,
+      });
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit corrected membership request",
       ),
   });
 
@@ -199,7 +231,11 @@ function MembershipManagePage() {
       case "active":
         return "Membership active";
       case "rejected":
-        return "Proof rejected, re-submission required";
+        return "Final rejection";
+      case "needs_correction":
+        return "Needs correction before re-review";
+      case "cancelled":
+        return "Membership revoked/cancelled";
       default:
         return "Not started";
     }
@@ -210,11 +246,13 @@ function MembershipManagePage() {
     | "waiting_payment"
     | "waiting_verification"
     | "active"
-    | "rejected"
+    | "needs_correction"
+    | "rejected_final"
   >(() => {
     const s = currentMembership?.status;
     if (!currentMembership) return "agreement";
-    if (s === "rejected") return "rejected";
+    if (s === "needs_correction" || s === "cancelled") return "needs_correction";
+    if (s === "rejected") return "rejected_final";
     if (s === "pending_payment") return "waiting_payment";
     if (s === "pending_review") return "waiting_verification";
     if (s === "active") return "active";
@@ -238,20 +276,41 @@ function MembershipManagePage() {
   }, [applicantForm.province]);
 
   const submitApplicantConsent = React.useCallback(() => {
-    if (!applicantForm.province) {
-      toast.error("Please select a province.");
-      return;
+    const nextErrors: ApplicantFormErrors = {};
+    if (!applicantForm.profession.trim()) nextErrors.profession = "Profession is required.";
+    if (!applicantForm.phone.trim()) nextErrors.phone = "Phone is required.";
+    if (!applicantForm.address.trim()) nextErrors.address = "Address is required.";
+    if (!applicantForm.province) nextErrors.province = "Please select a province.";
+    if (!applicantForm.institutionName.trim()) {
+      nextErrors.institutionName = "Institution name is required.";
     }
     if (!applicantForm.institutionType) {
-      toast.error("Please select institution type.");
+      nextErrors.institutionType = "Please select institution type.";
+    }
+    if (!applicantForm.contactPerson.trim()) {
+      nextErrors.contactPerson = "Contact person is required.";
+    }
+    setFormErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      toast.error("Please complete the required fields.");
       return;
     }
-    void consentMutation.mutateAsync({
+
+    const province = applicantForm.province as MembershipApplicantInput["province"];
+    const institutionType =
+      applicantForm.institutionType as MembershipApplicantInput["institutionType"];
+    const payload: MembershipApplicantInput = {
       ...applicantForm,
-      province: applicantForm.province,
-      institutionType: applicantForm.institutionType,
-    });
-  }, [applicantForm, consentMutation]);
+      province,
+      institutionType,
+    };
+
+    if (currentMembership?.status === "needs_correction") {
+      void resubmitMutation.mutateAsync(payload);
+      return;
+    }
+    void consentMutation.mutateAsync(payload);
+  }, [applicantForm, consentMutation, currentMembership?.status, resubmitMutation]);
 
   return (
     <main className="page-wrap mx-auto w-full max-w-4xl px-4 py-10">
@@ -321,7 +380,8 @@ function MembershipManagePage() {
             <CardContent className="flex flex-wrap gap-2">
               <Badge
                 variant={
-                  activeStage === "agreement" || activeStage === "rejected"
+                  activeStage === "agreement" ||
+                  activeStage === "needs_correction"
                     ? "default"
                     : "outline"
                 }
@@ -346,9 +406,16 @@ function MembershipManagePage() {
                 4. Membership active
               </Badge>
               <Badge
-                variant={activeStage === "rejected" ? "destructive" : "outline"}
+                variant={
+                  activeStage === "needs_correction" ? "destructive" : "outline"
+                }
               >
                 Needs correction
+              </Badge>
+              <Badge
+                variant={activeStage === "rejected_final" ? "destructive" : "outline"}
+              >
+                Final rejected
               </Badge>
             </CardContent>
         </Card>
@@ -359,9 +426,9 @@ function MembershipManagePage() {
                 <CardTitle>1) Applicant data & consent</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                {currentMembership?.status === "rejected" ? (
+                {currentMembership?.status === "needs_correction" ? (
                   <Alert variant="destructive">
-                    <AlertTitle>Your previous request was rejected</AlertTitle>
+                    <AlertTitle>Correction requested by admin</AlertTitle>
                     <AlertDescription>
                       {currentMembership.rejectionReason?.trim()
                         ? currentMembership.rejectionReason
@@ -369,10 +436,20 @@ function MembershipManagePage() {
                     </AlertDescription>
                   </Alert>
                 ) : null}
+                {currentMembership?.status === "cancelled" ? (
+                  <Alert>
+                    <AlertTitle>Your previous membership was revoked</AlertTitle>
+                    <AlertDescription>
+                      Submit a new request to continue your membership process.
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
                 <p className="text-muted-foreground">
                   Complete the following fields and submit consent. Once
                   submitted, your request will be saved with status Waiting for
-                  payment.
+                  {currentMembership?.status === "needs_correction"
+                    ? " admin review."
+                    : " payment."}
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="grid gap-2">
@@ -387,6 +464,9 @@ function MembershipManagePage() {
                         }))
                       }
                     />
+                    {formErrors.profession ? (
+                      <p className="text-xs text-destructive">{formErrors.profession}</p>
+                    ) : null}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="phone">Phone / WhatsApp</Label>
@@ -401,6 +481,9 @@ function MembershipManagePage() {
                         }))
                       }
                     />
+                    {formErrors.phone ? (
+                      <p className="text-xs text-destructive">{formErrors.phone}</p>
+                    ) : null}
                   </div>
                 </div>
                 <div className="grid gap-2">
@@ -416,6 +499,9 @@ function MembershipManagePage() {
                       }))
                     }
                   />
+                  {formErrors.address ? (
+                    <p className="text-xs text-destructive">{formErrors.address}</p>
+                  ) : null}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="grid gap-2">
@@ -457,6 +543,9 @@ function MembershipManagePage() {
                         <ComboboxEmpty>No province found.</ComboboxEmpty>
                       </ComboboxContent>
                     </Combobox>
+                    {formErrors.province ? (
+                      <p className="text-xs text-destructive">{formErrors.province}</p>
+                    ) : null}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="institutionName">Institution name</Label>
@@ -470,6 +559,11 @@ function MembershipManagePage() {
                         }))
                       }
                     />
+                    {formErrors.institutionName ? (
+                      <p className="text-xs text-destructive">
+                        {formErrors.institutionName}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -497,6 +591,11 @@ function MembershipManagePage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {formErrors.institutionType ? (
+                      <p className="text-xs text-destructive">
+                        {formErrors.institutionType}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="contactPerson">Contact person</Label>
@@ -510,16 +609,27 @@ function MembershipManagePage() {
                         }))
                       }
                     />
+                    {formErrors.contactPerson ? (
+                      <p className="text-xs text-destructive">
+                        {formErrors.contactPerson}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
                 <Button
                   type="button"
-                  disabled={consentMutation.isPending || !emailVerified}
+                  disabled={
+                    consentMutation.isPending ||
+                    resubmitMutation.isPending ||
+                    !emailVerified
+                  }
                   onClick={submitApplicantConsent}
                 >
-                  {consentMutation.isPending
+                  {consentMutation.isPending || resubmitMutation.isPending
                     ? "Submitting..."
-                    : "I agree and submit request"}
+                    : currentMembership?.status === "needs_correction"
+                      ? "Submit correction for re-review"
+                      : "I agree and submit request"}
                 </Button>
               </CardContent>
           </Card>
@@ -661,7 +771,11 @@ function MembershipManagePage() {
                         : currentMembership.status === "pending_payment"
                           ? "Transfer the exact amount, then upload your proof in the confirmation step."
                           : currentMembership.status === "rejected"
-                            ? "Submit a new request through the applicant data and consent form."
+                            ? "Your request was rejected with a final decision. Contact admin for follow-up."
+                            : currentMembership.status === "needs_correction"
+                              ? "Update your data based on reviewer note, then submit correction for re-review."
+                            : currentMembership.status === "cancelled"
+                              ? "Your previous membership has been revoked. Submit a new request from the applicant data and consent form."
                             : "—"}
                   </div>
                 </>
