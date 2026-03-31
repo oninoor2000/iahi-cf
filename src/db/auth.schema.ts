@@ -19,6 +19,7 @@ export const user = sqliteTable("user", {
     .default(false)
     .notNull(),
   image: text("image"),
+  bio: text("bio"),
   role: text("role").default(USER_ROLES.SUBSCRIBER),
   banned: integer("banned"),
   banReason: text("ban_reason"),

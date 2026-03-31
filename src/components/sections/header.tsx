@@ -1,6 +1,5 @@
 import {
   ArrowRightIcon,
-  ChevronDownIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   MenuIcon,
@@ -10,8 +9,11 @@ import {
 import { USER_ROLES } from "@/db/auth.schema";
 import type { SessionUserWithRole } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
+import { queryKeys } from "@/query/keys";
+import { getMyProfileFn } from "@/server/profile.functions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +59,12 @@ const Navbar = () => {
   const user = session?.user as SessionUserWithRole | undefined;
   const signedIn = Boolean(user);
   const showAdmin = isAdminRole(user);
+  const baseUrl = import.meta.env.VITE_APP_URL;
+  const profileQuery = useQuery({
+    queryKey: queryKeys.profile.headerImage(),
+    queryFn: getMyProfileFn,
+    enabled: signedIn,
+  });
 
   async function handleSignOut() {
     await authClient.signOut();
@@ -67,6 +75,14 @@ const Navbar = () => {
     user?.name?.trim().slice(0, 1).toUpperCase() ??
     user?.email?.slice(0, 1).toUpperCase() ??
     "?";
+  const rawAvatar = profileQuery.data?.profile.image ?? user?.image ?? null;
+  const avatarSrc = rawAvatar
+    ? rawAvatar.startsWith("http://") || rawAvatar.startsWith("https://")
+      ? rawAvatar
+      : rawAvatar.startsWith("/")
+        ? rawAvatar
+        : `${baseUrl.replace(/\/$/, "")}/${rawAvatar.replace(/^\//, "")}`
+    : null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
@@ -102,9 +118,7 @@ const Navbar = () => {
                   aria-label="Open user menu"
                 >
                   <Avatar size="sm" className="size-7">
-                    {user?.image ? (
-                      <AvatarImage src={user.image} alt="" />
-                    ) : null}
+                    {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
                     <AvatarFallback className="text-xs">
                       {initial}
                     </AvatarFallback>

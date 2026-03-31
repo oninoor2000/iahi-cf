@@ -13,15 +13,22 @@ import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-condi
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as PublicationsRouteImport } from './routes/publications'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MembersRouteImport } from './routes/members'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ProfileRouteRouteImport } from './routes/profile/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as ProfileSocialLinksRouteImport } from './routes/profile/social-links'
+import { Route as ProfileSecurityRouteImport } from './routes/profile/security'
+import { Route as ProfilePreferencesRouteImport } from './routes/profile/preferences'
+import { Route as ProfileMembershipRouteImport } from './routes/profile/membership'
+import { Route as ProfileContactRouteImport } from './routes/profile/contact'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAssetsSplatRouteImport } from './routes/api/assets/$'
 
 const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
   id: '/terms-and-conditions',
@@ -41,11 +48,6 @@ const SignInRoute = SignInRouteImport.update({
 const PublicationsRoute = PublicationsRouteImport.update({
   id: '/publications',
   path: '/publications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
@@ -73,10 +75,45 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRouteRoute = ProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileSocialLinksRoute = ProfileSocialLinksRouteImport.update({
+  id: '/social-links',
+  path: '/social-links',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfilePreferencesRoute = ProfilePreferencesRouteImport.update({
+  id: '/preferences',
+  path: '/preferences',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileMembershipRoute = ProfileMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileContactRoute = ProfileContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => ProfileRouteRoute,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
@@ -88,20 +125,32 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAssetsSplatRoute = ApiAssetsSplatRouteImport.update({
+  id: '/api/assets/$',
+  path: '/api/assets/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
   '/members': typeof MembersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/profile': typeof ProfileRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/profile/contact': typeof ProfileContactRoute
+  '/profile/membership': typeof ProfileMembershipRoute
+  '/profile/preferences': typeof ProfilePreferencesRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile/social-links': typeof ProfileSocialLinksRoute
+  '/profile/': typeof ProfileIndexRoute
+  '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -111,45 +160,65 @@ export interface FileRoutesByTo {
   '/contact-us': typeof ContactUsRoute
   '/members': typeof MembersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/profile': typeof ProfileRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/profile/contact': typeof ProfileContactRoute
+  '/profile/membership': typeof ProfileMembershipRoute
+  '/profile/preferences': typeof ProfilePreferencesRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile/social-links': typeof ProfileSocialLinksRoute
+  '/profile': typeof ProfileIndexRoute
+  '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
   '/members': typeof MembersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/profile': typeof ProfileRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/profile/contact': typeof ProfileContactRoute
+  '/profile/membership': typeof ProfileMembershipRoute
+  '/profile/preferences': typeof ProfilePreferencesRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile/social-links': typeof ProfileSocialLinksRoute
+  '/profile/': typeof ProfileIndexRoute
+  '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/profile'
     | '/about'
     | '/agenda'
     | '/contact-us'
     | '/members'
     | '/privacy-policy'
-    | '/profile'
     | '/publications'
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/profile/contact'
+    | '/profile/membership'
+    | '/profile/preferences'
+    | '/profile/security'
+    | '/profile/social-links'
+    | '/profile/'
+    | '/api/assets/$'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -159,43 +228,57 @@ export interface FileRouteTypes {
     | '/contact-us'
     | '/members'
     | '/privacy-policy'
-    | '/profile'
     | '/publications'
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/profile/contact'
+    | '/profile/membership'
+    | '/profile/preferences'
+    | '/profile/security'
+    | '/profile/social-links'
+    | '/profile'
+    | '/api/assets/$'
     | '/api/auth/$'
   id:
     | '__root__'
     | '/'
+    | '/profile'
     | '/about'
     | '/agenda'
     | '/contact-us'
     | '/members'
     | '/privacy-policy'
-    | '/profile'
     | '/publications'
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/profile/contact'
+    | '/profile/membership'
+    | '/profile/preferences'
+    | '/profile/security'
+    | '/profile/social-links'
+    | '/profile/'
+    | '/api/assets/$'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AgendaRoute: typeof AgendaRoute
   ContactUsRoute: typeof ContactUsRoute
   MembersRoute: typeof MembersRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  ProfileRoute: typeof ProfileRoute
   PublicationsRoute: typeof PublicationsRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  ApiAssetsSplatRoute: typeof ApiAssetsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -227,13 +310,6 @@ declare module '@tanstack/react-router' {
       path: '/publications'
       fullPath: '/publications'
       preLoaderRoute: typeof PublicationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy-policy': {
@@ -271,12 +347,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/social-links': {
+      id: '/profile/social-links'
+      path: '/social-links'
+      fullPath: '/profile/social-links'
+      preLoaderRoute: typeof ProfileSocialLinksRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/security': {
+      id: '/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof ProfileSecurityRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/preferences': {
+      id: '/profile/preferences'
+      path: '/preferences'
+      fullPath: '/profile/preferences'
+      preLoaderRoute: typeof ProfilePreferencesRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/membership': {
+      id: '/profile/membership'
+      path: '/membership'
+      fullPath: '/profile/membership'
+      preLoaderRoute: typeof ProfileMembershipRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/contact': {
+      id: '/profile/contact'
+      path: '/contact'
+      fullPath: '/profile/contact'
+      preLoaderRoute: typeof ProfileContactRouteImport
+      parentRoute: typeof ProfileRouteRoute
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
@@ -292,22 +417,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/assets/$': {
+      id: '/api/assets/$'
+      path: '/api/assets/$'
+      fullPath: '/api/assets/$'
+      preLoaderRoute: typeof ApiAssetsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface ProfileRouteRouteChildren {
+  ProfileContactRoute: typeof ProfileContactRoute
+  ProfileMembershipRoute: typeof ProfileMembershipRoute
+  ProfilePreferencesRoute: typeof ProfilePreferencesRoute
+  ProfileSecurityRoute: typeof ProfileSecurityRoute
+  ProfileSocialLinksRoute: typeof ProfileSocialLinksRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
+}
+
+const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
+  ProfileContactRoute: ProfileContactRoute,
+  ProfileMembershipRoute: ProfileMembershipRoute,
+  ProfilePreferencesRoute: ProfilePreferencesRoute,
+  ProfileSecurityRoute: ProfileSecurityRoute,
+  ProfileSocialLinksRoute: ProfileSocialLinksRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
+}
+
+const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
+  ProfileRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProfileRouteRoute: ProfileRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AgendaRoute: AgendaRoute,
   ContactUsRoute: ContactUsRoute,
   MembersRoute: MembersRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  ProfileRoute: ProfileRoute,
   PublicationsRoute: PublicationsRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  ApiAssetsSplatRoute: ApiAssetsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

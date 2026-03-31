@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import { ThemeProvider } from "../components/providers/theme-provider";
+import { AppQueryClientProvider } from "@/components/providers/query-client-provider";
 
 import appCss from "../styles.css?url";
 import Footer from "@/components/sections/footer";
@@ -67,10 +68,12 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
-        <ThemeProvider>
-          <SiteChrome>{children}</SiteChrome>
-          <Toaster position="bottom-right" richColors closeButton />
-        </ThemeProvider>
+        <AppQueryClientProvider>
+          <ThemeProvider>
+            <SiteChrome>{children}</SiteChrome>
+            <Toaster position="bottom-right" richColors closeButton />
+          </ThemeProvider>
+        </AppQueryClientProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",

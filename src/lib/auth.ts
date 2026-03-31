@@ -12,9 +12,9 @@ import { admin, customSession } from "better-auth/plugins";
 import { adminAc, userAc } from "better-auth/plugins/admin/access";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { withCloudflare } from "better-auth-cloudflare";
-import { env } from "cloudflare:workers";
 import { user as userTable } from "@/db/auth.schema";
 import { eq } from "drizzle-orm";
+import { getKvBinding } from "@/server/env.server";
 
 const db = getDb();
 const cloudflareOptions = {
@@ -22,7 +22,7 @@ const cloudflareOptions = {
   d1: {
     db,
   },
-  kv: env.KV,
+  kv: getKvBinding(),
 } as unknown as Parameters<typeof withCloudflare>[0];
 
 export const auth = betterAuth({
