@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "iahi",
+  "name": "iahi-cf",
   // Set this to today's date
   "compatibility_date": "2026-03-17",
   "compatibility_flags": ["nodejs_compat"],
@@ -52,6 +52,7 @@
    */
   "vars": {
     "VITE_APP_URL": "https://iahi-cf.flaener.workers.dev",
+    "BETTER_AUTH_URL": "https://iahi-cf.flaener.workers.dev",
     "SMTP_FROM_NAME": "IAHI - Perhimpunan Informatika Kesehatan Indonesia",
     "SMTP_HOST": "smtp.gmail.com",
     "SMTP_PORT": "587",

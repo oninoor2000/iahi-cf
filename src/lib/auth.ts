@@ -16,14 +16,6 @@ import { env } from "cloudflare:workers";
 import { user as userTable } from "@/db/auth.schema";
 import { eq } from "drizzle-orm";
 
-function resolveBaseURL(): string {
-  const raw =
-    process.env.VITE_APP_URL ??
-    process.env.VITE_BETTER_AUTH_URL ??
-    "http://localhost:3000";
-  return raw.replace(/\/$/, "");
-}
-
 const db = getDb();
 const cloudflareOptions = {
   cf: {},
@@ -102,7 +94,7 @@ export const auth = betterAuth({
       tanstackStartCookies(),
     ], // Make sure tanstack start cookies plugin is the last plugin on the array
   }),
-  baseURL: resolveBaseURL(),
+  baseURL: process.env.BETTER_AUTH_URL,
 });
 
 /** Inferred session shape from the server config. */
