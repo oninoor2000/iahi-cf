@@ -71,6 +71,14 @@ export const membership = sqliteTable(
       onDelete: "set null",
     }),
     notes: text("notes"),
+    /** Snapshot applicant details at consent / application time */
+    profession: text("profession"),
+    phone: text("phone"),
+    address: text("address"),
+    province: text("province"),
+    institutionName: text("institution_name"),
+    institutionType: text("institution_type"),
+    contactPerson: text("contact_person"),
     cardVersion: integer("card_version").notNull().default(1),
     revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" })

@@ -16,7 +16,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,6 +65,24 @@ function ProfileMembershipPage() {
   const status = membershipData?.membership?.status ?? "not_a_member";
   const memberNumber = membershipData?.membership?.memberNumber ?? "—";
   const avatarImage = profileQuery.data?.profile.image ?? user?.image ?? null;
+  const verifyUrl = membershipData?.membership?.verifyUrl ?? "";
+  const qrSrc = verifyUrl
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
+        `${typeof window !== "undefined" ? window.location.origin : ""}${verifyUrl}`,
+      )}`
+    : "";
+  const cardName = (user?.name ?? "Your name").trim() || "Your name";
+  const cardEmail = (user?.email ?? "you@example.com").trim() || "you@example.com";
+  const cardStatus = status.replace(/_/g, " ");
+  const cardValidUntil = membershipData?.membership?.validUntil
+    ? new Date(membershipData.membership.validUntil).toLocaleDateString()
+    : "—";
+
+  const truncateText = React.useCallback((value: string, max: number) => {
+    const safe = value.trim();
+    if (safe.length <= max) return safe;
+    return `${safe.slice(0, Math.max(0, max - 1))}\u2026`;
+  }, []);
 
   return (
     <Card>
@@ -107,7 +124,7 @@ function ProfileMembershipPage() {
                       Not now
                     </AlertDialogCancel>
                     <AlertDialogAction variant="default" size="sm" asChild>
-                      <a href="/members">Continue</a>
+                      <a href="/membership/manage">Continue</a>
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -119,34 +136,183 @@ function ProfileMembershipPage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
           <div>
             <div className="text-xs text-muted-foreground">ID card preview</div>
-            <div className="mt-2 overflow-hidden rounded-none border border-border/60 bg-linear-to-br from-primary/10 via-background to-background p-4">
-              <div className="flex items-center gap-3">
-                <Avatar className="size-12 rounded-full">
-                  {avatarImage ? <AvatarImage src={avatarImage} alt="" /> : null}
-                  <AvatarFallback className="text-sm">{initial}</AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">
-                    {user?.name ?? "Your name"}
-                  </div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {user?.email ?? "you@example.com"}
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                <div className="space-y-0.5">
-                  <div className="text-muted-foreground">Member No.</div>
-                  <div className="font-medium tabular-nums">{memberNumber}</div>
-                </div>
-                <div className="space-y-0.5">
-                  <div className="text-muted-foreground">Status</div>
-                  <div className="font-medium">{status}</div>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-3 text-xs text-muted-foreground">
-                <span>IAHI</span>
-                <span>Digital Member Card</span>
+            <div
+              className="relative mt-2 w-full max-w-[520px] overflow-hidden rounded-xl border border-border/60 bg-linear-to-br from-primary/15 via-background to-background"
+              style={{ aspectRatio: "1.586/1" }}
+            >
+              <svg
+                viewBox="0 0 860 542"
+                className="h-full w-full"
+                role="img"
+                aria-label="IAHI digital member ID card preview"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                <defs>
+                  <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(224 80% 94%)" />
+                    <stop offset="55%" stopColor="hsl(0 0% 100%)" />
+                    <stop offset="100%" stopColor="hsl(0 0% 97%)" />
+                  </linearGradient>
+                  <clipPath id="avatarClip">
+                    <circle cx="110" cy="170" r="52" />
+                  </clipPath>
+                </defs>
+
+                <rect x="0" y="0" width="860" height="542" fill="url(#cardBg)" />
+                <rect
+                  x="1"
+                  y="1"
+                  width="858"
+                  height="540"
+                  rx="22"
+                  ry="22"
+                  fill="none"
+                  stroke="hsl(0 0% 84%)"
+                />
+
+                <text x="44" y="52" fontSize="18" fontWeight="700" fill="hsl(222 20% 16%)">
+                  IAHI Digital Member ID
+                </text>
+                <text x="764" y="52" fontSize="14" textAnchor="end" fill="hsl(215 12% 42%)">
+                  Card preview
+                </text>
+
+                <circle cx="110" cy="170" r="52" fill="hsl(220 16% 88%)" />
+                {avatarImage ? (
+                  <image
+                    href={avatarImage}
+                    x="58"
+                    y="118"
+                    width="104"
+                    height="104"
+                    clipPath="url(#avatarClip)"
+                    preserveAspectRatio="xMidYMid slice"
+                  />
+                ) : (
+                  <text
+                    x="110"
+                    y="183"
+                    textAnchor="middle"
+                    fontSize="38"
+                    fontWeight="700"
+                    fill="hsl(222 20% 24%)"
+                  >
+                    {initial}
+                  </text>
+                )}
+
+                <text x="184" y="160" fontSize="30" fontWeight="700" fill="hsl(222 20% 16%)">
+                  {truncateText(cardName, 30)}
+                </text>
+                <text x="184" y="196" fontSize="18" fill="hsl(215 12% 42%)">
+                  {truncateText(cardEmail, 42)}
+                </text>
+
+                <rect x="650" y="102" width="160" height="160" rx="10" ry="10" fill="white" />
+                <rect
+                  x="650"
+                  y="102"
+                  width="160"
+                  height="160"
+                  rx="10"
+                  ry="10"
+                  fill="none"
+                  stroke="hsl(0 0% 84%)"
+                />
+                {qrSrc ? (
+                  <image
+                    href={qrSrc}
+                    x="662"
+                    y="114"
+                    width="136"
+                    height="136"
+                    preserveAspectRatio="xMidYMid meet"
+                  />
+                ) : (
+                  <text
+                    x="730"
+                    y="188"
+                    textAnchor="middle"
+                    fontSize="24"
+                    fontWeight="600"
+                    fill="hsl(215 12% 42%)"
+                  >
+                    QR
+                  </text>
+                )}
+
+                <text x="44" y="300" fontSize="16" fill="hsl(215 12% 42%)">
+                  Member No.
+                </text>
+                <text
+                  x="44"
+                  y="326"
+                  fontSize="22"
+                  fontWeight="600"
+                  fill="hsl(222 20% 16%)"
+                >
+                  {truncateText(memberNumber, 26)}
+                </text>
+
+                <text x="430" y="300" fontSize="16" fill="hsl(215 12% 42%)">
+                  Status
+                </text>
+                <text
+                  x="430"
+                  y="326"
+                  fontSize="22"
+                  fontWeight="600"
+                  fill="hsl(222 20% 16%)"
+                  style={{ textTransform: "capitalize" }}
+                >
+                  {truncateText(cardStatus, 18)}
+                </text>
+
+                <text x="44" y="380" fontSize="16" fill="hsl(215 12% 42%)">
+                  Valid until
+                </text>
+                <text
+                  x="44"
+                  y="406"
+                  fontSize="22"
+                  fontWeight="600"
+                  fill="hsl(222 20% 16%)"
+                >
+                  {cardValidUntil}
+                </text>
+
+                <text x="430" y="380" fontSize="16" fill="hsl(215 12% 42%)">
+                  Card version
+                </text>
+                <text
+                  x="430"
+                  y="406"
+                  fontSize="22"
+                  fontWeight="600"
+                  fill="hsl(222 20% 16%)"
+                >
+                  {membershipData?.membership?.cardVersion ?? "—"}
+                </text>
+
+                <line x1="44" y1="452" x2="816" y2="452" stroke="hsl(0 0% 84%)" />
+                <text x="44" y="488" fontSize="16" fill="hsl(215 12% 42%)">
+                  {isActive ? "Ready for verify/check-in" : "Preview mode"}
+                </text>
+              </svg>
+
+              <div className="absolute right-6 bottom-6 text-xs text-muted-foreground">
+                {verifyUrl ? (
+                  <a
+                    href={verifyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-2"
+                  >
+                    Open verify link
+                  </a>
+                ) : (
+                  <span>Verification link unavailable</span>
+                )}
               </div>
             </div>
           </div>
@@ -155,16 +321,22 @@ function ProfileMembershipPage() {
             <div className="text-sm font-semibold">Why join?</div>
             <ul className="list-disc space-y-1 pl-4 text-xs text-muted-foreground">
               <li>Official member number & card template</li>
-              <li>Member recognition for events & activities</li>
+              <li>Card QR for verification and event check-in</li>
               <li>Priority updates for community programs</li>
             </ul>
             {!isActive ? (
               <Button asChild className="mt-3 w-full">
-                <a href="/members">Join membership</a>
+                <a href="/membership/manage">Join membership</a>
               </Button>
             ) : (
-              <Button variant="outline" className="mt-3 w-full" disabled>
-                Membership active
+              <Button variant="outline" className="mt-3 w-full" asChild>
+                <a
+                  href={verifyUrl || "/members/verify"}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open verification page
+                </a>
               </Button>
             )}
           </div>

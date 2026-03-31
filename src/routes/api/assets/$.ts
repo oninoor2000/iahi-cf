@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getR2Binding } from "@/server/env.server";
+import { getFrequentR2Binding } from "@/server/env.server";
 
 export const Route = createFileRoute("/api/assets/$")({
   server: {
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/assets/$")({
           return new Response("Not found", { status: 404 });
         }
 
-        const obj = await getR2Binding().get(objectKey);
+        const obj = await getFrequentR2Binding().get(objectKey);
         if (!obj) return new Response("Not found", { status: 404 });
 
         const headers = new Headers();
@@ -29,4 +29,3 @@ export const Route = createFileRoute("/api/assets/$")({
     },
   },
 });
-

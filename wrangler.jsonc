@@ -18,7 +18,7 @@
     {
       "binding": "DB",
       "database_name": "iahi-db",
-      "database_id": "9535de08-5cd3-44ab-8241-5b9ae13ef19b",
+      "database_id": "dfde5f72-a05f-48f4-9991-fb6bd2cd88c4",
       "remote": true,
     },
   ],
@@ -36,8 +36,13 @@
 
   "r2_buckets": [
     {
-      "binding": "R2",
+      "binding": "iahiR2Infrequent",
       "bucket_name": "iahi-confirmation-pay-r2",
+      "remote": true,
+    },
+    {
+      "binding": "iahiR2",
+      "bucket_name": "iahi-bucket-r2",
       "remote": true,
     },
   ],

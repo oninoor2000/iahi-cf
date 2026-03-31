@@ -26,7 +26,11 @@ import { Route as ProfileSecurityRouteImport } from './routes/profile/security'
 import { Route as ProfilePreferencesRouteImport } from './routes/profile/preferences'
 import { Route as ProfileMembershipRouteImport } from './routes/profile/membership'
 import { Route as ProfileContactRouteImport } from './routes/profile/contact'
+import { Route as MembershipManageRouteImport } from './routes/membership/manage'
+import { Route as MembersVerifyRouteImport } from './routes/members/verify'
+import { Route as AdminMembershipRouteImport } from './routes/admin/membership'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as ApiProofsSplatRouteImport } from './routes/api/proofs/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAssetsSplatRouteImport } from './routes/api/assets/$'
 
@@ -115,9 +119,29 @@ const ProfileContactRoute = ProfileContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => ProfileRouteRoute,
 } as any)
+const MembershipManageRoute = MembershipManageRouteImport.update({
+  id: '/membership/manage',
+  path: '/membership/manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembersVerifyRoute = MembersVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => MembersRoute,
+} as any)
+const AdminMembershipRoute = AdminMembershipRouteImport.update({
+  id: '/admin/membership',
+  path: '/admin/membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProofsSplatRoute = ApiProofsSplatRouteImport.update({
+  id: '/api/proofs/$',
+  path: '/api/proofs/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -137,13 +161,16 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRoute
+  '/members': typeof MembersRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/membership': typeof AdminMembershipRoute
+  '/members/verify': typeof MembersVerifyRoute
+  '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/preferences': typeof ProfilePreferencesRoute
@@ -152,19 +179,23 @@ export interface FileRoutesByFullPath {
   '/profile/': typeof ProfileIndexRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/proofs/$': typeof ApiProofsSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRoute
+  '/members': typeof MembersRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/membership': typeof AdminMembershipRoute
+  '/members/verify': typeof MembersVerifyRoute
+  '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/preferences': typeof ProfilePreferencesRoute
@@ -173,6 +204,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileIndexRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/proofs/$': typeof ApiProofsSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -181,13 +213,16 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRoute
+  '/members': typeof MembersRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/membership': typeof AdminMembershipRoute
+  '/members/verify': typeof MembersVerifyRoute
+  '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/preferences': typeof ProfilePreferencesRoute
@@ -196,6 +231,7 @@ export interface FileRoutesById {
   '/profile/': typeof ProfileIndexRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/proofs/$': typeof ApiProofsSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -212,6 +248,9 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/admin/membership'
+    | '/members/verify'
+    | '/membership/manage'
     | '/profile/contact'
     | '/profile/membership'
     | '/profile/preferences'
@@ -220,6 +259,7 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/api/assets/$'
     | '/api/auth/$'
+    | '/api/proofs/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -233,6 +273,9 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/admin/membership'
+    | '/members/verify'
+    | '/membership/manage'
     | '/profile/contact'
     | '/profile/membership'
     | '/profile/preferences'
@@ -241,6 +284,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/api/assets/$'
     | '/api/auth/$'
+    | '/api/proofs/$'
   id:
     | '__root__'
     | '/'
@@ -255,6 +299,9 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/terms-and-conditions'
     | '/admin/dashboard'
+    | '/admin/membership'
+    | '/members/verify'
+    | '/membership/manage'
     | '/profile/contact'
     | '/profile/membership'
     | '/profile/preferences'
@@ -263,6 +310,7 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/api/assets/$'
     | '/api/auth/$'
+    | '/api/proofs/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -271,15 +319,18 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AgendaRoute: typeof AgendaRoute
   ContactUsRoute: typeof ContactUsRoute
-  MembersRoute: typeof MembersRoute
+  MembersRoute: typeof MembersRouteWithChildren
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   PublicationsRoute: typeof PublicationsRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminMembershipRoute: typeof AdminMembershipRoute
+  MembershipManageRoute: typeof MembershipManageRoute
   ApiAssetsSplatRoute: typeof ApiAssetsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiProofsSplatRoute: typeof ApiProofsSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -403,11 +454,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileContactRouteImport
       parentRoute: typeof ProfileRouteRoute
     }
+    '/membership/manage': {
+      id: '/membership/manage'
+      path: '/membership/manage'
+      fullPath: '/membership/manage'
+      preLoaderRoute: typeof MembershipManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/members/verify': {
+      id: '/members/verify'
+      path: '/verify'
+      fullPath: '/members/verify'
+      preLoaderRoute: typeof MembersVerifyRouteImport
+      parentRoute: typeof MembersRoute
+    }
+    '/admin/membership': {
+      id: '/admin/membership'
+      path: '/admin/membership'
+      fullPath: '/admin/membership'
+      preLoaderRoute: typeof AdminMembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/proofs/$': {
+      id: '/api/proofs/$'
+      path: '/api/proofs/$'
+      fullPath: '/api/proofs/$'
+      preLoaderRoute: typeof ApiProofsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -449,21 +528,35 @@ const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
   ProfileRouteRouteChildren,
 )
 
+interface MembersRouteChildren {
+  MembersVerifyRoute: typeof MembersVerifyRoute
+}
+
+const MembersRouteChildren: MembersRouteChildren = {
+  MembersVerifyRoute: MembersVerifyRoute,
+}
+
+const MembersRouteWithChildren =
+  MembersRoute._addFileChildren(MembersRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProfileRouteRoute: ProfileRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AgendaRoute: AgendaRoute,
   ContactUsRoute: ContactUsRoute,
-  MembersRoute: MembersRoute,
+  MembersRoute: MembersRouteWithChildren,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   PublicationsRoute: PublicationsRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminMembershipRoute: AdminMembershipRoute,
+  MembershipManageRoute: MembershipManageRoute,
   ApiAssetsSplatRoute: ApiAssetsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiProofsSplatRoute: ApiProofsSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

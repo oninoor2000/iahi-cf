@@ -1,7 +1,7 @@
 import { user as userTable } from "@/db/auth.schema";
 import { getDb } from "@/db";
 import { auth } from "@/lib/auth";
-import { getR2Binding } from "@/server/env.server";
+import { getFrequentR2Binding } from "@/server/env.server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
@@ -32,7 +32,7 @@ export type MyProfile = {
 async function requireUserId(): Promise<string> {
   const request = getRequest();
   const session = await auth.api.getSession({ headers: request.headers });
-  const userId = session?.user?.id;
+  const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) throw new Error("Unauthorized");
   return userId;
 }
@@ -99,7 +99,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
     const objectKey = `avatars/${userId}/${now}.${ext}`;
     const bytes = new Uint8Array(await file.arrayBuffer());
 
-    const r2 = getR2Binding();
+    const r2 = getFrequentR2Binding();
     await r2.put(objectKey, bytes, {
       httpMetadata: { contentType: file.type || "application/octet-stream" },
       customMetadata: { originalFilename: file.name, userId },
@@ -135,4 +135,3 @@ export const changePasswordFn = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
-

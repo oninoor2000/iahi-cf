@@ -36,6 +36,8 @@ import {
   SparklesIcon,
   UserRoundIcon,
 } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 
 type ProfileNavItem = {
   to:
@@ -103,6 +105,8 @@ function ProfileLayoutRoute() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
+  const emailVerified = Boolean(user?.emailVerified);
+  const [isResendingVerification, setIsResendingVerification] = React.useState(false);
   const membershipQuery = useQuery({
     queryKey: queryKeys.membership.me(),
     queryFn: getMyMembershipFn,
@@ -185,6 +189,53 @@ function ProfileLayoutRoute() {
             </div>
           ) : (
             <>
+              {!emailVerified ? (
+                <Alert className="mb-4">
+                  <AlertTitle>Email verification required</AlertTitle>
+                  <AlertDescription>
+                    Verify your email before accessing membership enrollment and other protected actions.
+                  </AlertDescription>
+                  <AlertAction>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={isResendingVerification}
+                      onClick={async () => {
+                        const home =
+                          typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+                        const email = user?.email;
+                        if (!email) {
+                          toast.error("Email not found for this session.");
+                          return;
+                        }
+                        setIsResendingVerification(true);
+                        try {
+                          const res = await authClient.sendVerificationEmail({
+                            email,
+                            callbackURL: home,
+                          });
+                          if (res.error) {
+                            throw new Error(
+                              res.error.message ?? "Could not send verification email.",
+                            );
+                          }
+                          toast.success("Verification email sent. Check your inbox.");
+                        } catch (err) {
+                          toast.error(
+                            err instanceof Error
+                              ? err.message
+                              : "Failed to resend verification email.",
+                          );
+                        } finally {
+                          setIsResendingVerification(false);
+                        }
+                      }}
+                    >
+                      {isResendingVerification ? "Sending..." : "Resend verification email"}
+                    </Button>
+                  </AlertAction>
+                </Alert>
+              ) : null}
               {showJoinMembership ? (
                 <Alert className="mb-4">
                   <SparklesIcon aria-hidden />
@@ -220,7 +271,7 @@ function ProfileLayoutRoute() {
                             size="sm"
                             asChild
                           >
-                            <a href="/members">Continue</a>
+                            <a href="/membership/manage">Continue</a>
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
