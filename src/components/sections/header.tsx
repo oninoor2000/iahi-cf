@@ -56,7 +56,8 @@ function isAdminRole(user: SessionUserWithRole | undefined): boolean {
 /** Desktop inline nav starts at `lg` so tablets (e.g. iPad mini) keep the mobile sheet. */
 const Navbar = () => {
   const navigate = useNavigate();
-  const { data: session, isPending: isSessionPending } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const user = session?.user as SessionUserWithRole | undefined;
   const signedIn = Boolean(user);
   const showAdmin = isAdminRole(user);
@@ -88,9 +89,13 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-0">
-        <span className="text-xl font-bold tracking-tight lg:text-2xl">
-          IAHI
-        </span>
+        <Link to="/" className="shrink-0">
+          <img
+            src="/iahi-logo-square.png"
+            alt="Indonesian Association of Health Informatics"
+            className="h-10 w-auto object-contain"
+          />
+        </Link>
         <nav
           className="hidden flex-1 items-center justify-center gap-6 font-medium text-muted-foreground lg:flex xl:gap-8"
           aria-label="Main"
@@ -205,7 +210,13 @@ const Navbar = () => {
               className="w-[88vw] border-l-0 p-0 duration-300 sm:max-w-sm"
             >
               <SheetHeader className="border-b px-5 py-4">
-                <SheetTitle className="text-lg">IAHI</SheetTitle>
+                <SheetTitle className="text-lg">
+                  <img
+                    src="/iahi-logo-horizontal.png"
+                    alt="Indonesian Association of Health Informatics"
+                    className="h-10 w-auto object-contain"
+                  />
+                </SheetTitle>
                 <SheetDescription>
                   Indonesian Association of Health Informatics
                 </SheetDescription>

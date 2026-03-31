@@ -1,19 +1,16 @@
 import { USER_ROLES } from "@/db/auth.schema";
 import { authClient } from "@/lib/auth-client";
+import {
+  getCurrentSessionFn,
+  type SessionGuardUser,
+  type SessionResponse,
+} from "@/server/api/session.functions";
 import { redirect } from "@tanstack/react-router";
 
 type RouteLocationLike = {
   pathname?: string;
   searchStr?: string;
 };
-
-type SessionGuardUser = {
-  role?: string;
-};
-
-type SessionResponse = {
-  user?: SessionGuardUser | null;
-} | null;
 
 function getRedirectTarget(location?: RouteLocationLike): string {
   const pathname = location?.pathname ?? "/";
@@ -23,13 +20,7 @@ function getRedirectTarget(location?: RouteLocationLike): string {
 
 async function readSession(): Promise<SessionResponse> {
   if (typeof window === "undefined") {
-    const [{ auth }, { getRequest }] = await Promise.all([
-      import("@/lib/auth"),
-      import("@tanstack/react-start/server"),
-    ]);
-    const request = getRequest();
-    const session = await auth.api.getSession({ headers: request.headers });
-    return (session ?? null) as SessionResponse;
+    return await getCurrentSessionFn();
   }
 
   const result = await authClient.getSession({

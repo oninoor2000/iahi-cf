@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({
@@ -15,11 +16,31 @@ export const Route = createFileRoute("/admin/dashboard")({
 
 function AdminDashboardPage() {
   return (
-    <main className="page-wrap mx-auto max-w-5xl px-4 py-12">
-      <h1 className="text-2xl font-semibold tracking-tight">Admin dashboard</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        This page is a placeholder. Add admin tools and metrics here.
-      </p>
-    </main>
+    <section className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Admin dashboard</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ringkasan alat administrasi IAHI.
+        </p>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Membership approvals</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Tinjau pendaftaran member dan konfirmasi pembayaran.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Kelola user dan data member (MVP).
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 }

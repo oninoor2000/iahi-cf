@@ -20,6 +20,7 @@ import { Route as ContactUsRouteImport } from './routes/contact-us'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProfileRouteRouteImport } from './routes/profile/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ProfileSocialLinksRouteImport } from './routes/profile/social-links'
@@ -29,6 +30,7 @@ import { Route as ProfileMembershipRouteImport } from './routes/profile/membersh
 import { Route as ProfileContactRouteImport } from './routes/profile/contact'
 import { Route as MembershipManageRouteImport } from './routes/membership/manage'
 import { Route as MembersVerifyRouteImport } from './routes/members/verify'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminMembershipRouteImport } from './routes/admin/membership'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as ApiProofsSplatRouteImport } from './routes/api/proofs/$'
@@ -90,6 +92,11 @@ const ProfileRouteRoute = ProfileRouteRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -135,15 +142,20 @@ const MembersVerifyRoute = MembersVerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => MembersRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminMembershipRoute = AdminMembershipRouteImport.update({
-  id: '/admin/membership',
-  path: '/admin/membership',
-  getParentRoute: () => rootRouteImport,
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
-  getParentRoute: () => rootRouteImport,
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const ApiProofsSplatRoute = ApiProofsSplatRouteImport.update({
   id: '/api/proofs/$',
@@ -163,6 +175,7 @@ const ApiAssetsSplatRoute = ApiAssetsSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/profile': typeof ProfileRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
@@ -176,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
+  '/admin/users': typeof AdminUsersRoute
   '/members/verify': typeof MembersVerifyRoute
   '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
@@ -190,6 +204,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
   '/contact-us': typeof ContactUsRoute
@@ -202,6 +217,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
+  '/admin/users': typeof AdminUsersRoute
   '/members/verify': typeof MembersVerifyRoute
   '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
@@ -217,6 +233,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/profile': typeof ProfileRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agenda': typeof AgendaRoute
@@ -230,6 +247,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
+  '/admin/users': typeof AdminUsersRoute
   '/members/verify': typeof MembersVerifyRoute
   '/membership/manage': typeof MembershipManageRoute
   '/profile/contact': typeof ProfileContactRoute
@@ -246,6 +264,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/profile'
     | '/about'
     | '/agenda'
@@ -259,6 +278,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
+    | '/admin/users'
     | '/members/verify'
     | '/membership/manage'
     | '/profile/contact'
@@ -273,6 +293,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/about'
     | '/agenda'
     | '/contact-us'
@@ -285,6 +306,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
+    | '/admin/users'
     | '/members/verify'
     | '/membership/manage'
     | '/profile/contact'
@@ -299,6 +321,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/profile'
     | '/about'
     | '/agenda'
@@ -312,6 +335,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
+    | '/admin/users'
     | '/members/verify'
     | '/membership/manage'
     | '/profile/contact'
@@ -327,6 +351,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AgendaRoute: typeof AgendaRoute
@@ -338,8 +363,6 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminMembershipRoute: typeof AdminMembershipRoute
   MembershipManageRoute: typeof MembershipManageRoute
   ApiAssetsSplatRoute: typeof ApiAssetsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -425,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -488,19 +518,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembersVerifyRouteImport
       parentRoute: typeof MembersRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/membership': {
       id: '/admin/membership'
-      path: '/admin/membership'
+      path: '/membership'
       fullPath: '/admin/membership'
       preLoaderRoute: typeof AdminMembershipRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
-      path: '/admin/dashboard'
+      path: '/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/api/proofs/$': {
       id: '/api/proofs/$'
@@ -525,6 +562,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminMembershipRoute: typeof AdminMembershipRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminMembershipRoute: AdminMembershipRoute,
+  AdminUsersRoute: AdminUsersRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
 interface ProfileRouteRouteChildren {
   ProfileContactRoute: typeof ProfileContactRoute
@@ -561,6 +614,7 @@ const MembersRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   ProfileRouteRoute: ProfileRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AgendaRoute: AgendaRoute,
@@ -572,8 +626,6 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   UnauthorizedRoute: UnauthorizedRoute,
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminMembershipRoute: AdminMembershipRoute,
   MembershipManageRoute: MembershipManageRoute,
   ApiAssetsSplatRoute: ApiAssetsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

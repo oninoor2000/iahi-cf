@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { requireAdminUser } from "@/lib/route-guards";
 import { queryKeys } from "@/query/keys";
 import {
   listPendingMembershipReviewsFn,
@@ -14,9 +13,6 @@ import * as React from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/membership")({
-  beforeLoad: async ({ location }) => {
-    await requireAdminUser(location);
-  },
   component: AdminMembershipPage,
   pendingComponent: AdminMembershipPending,
 });
@@ -54,7 +50,7 @@ function AdminMembershipPage() {
   });
 
   return (
-    <main className="page-wrap mx-auto max-w-5xl px-4 py-12">
+    <section className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">
           Membership Review
@@ -67,7 +63,7 @@ function AdminMembershipPage() {
         Review payment proof and approve or reject membership applications.
       </p>
 
-      <div className="mt-6 space-y-4">
+      <div className="space-y-4">
         {pendingQuery.data?.items?.length ? (
           pendingQuery.data.items.map((item) => {
             const id = String(item.id);
@@ -185,19 +181,19 @@ function AdminMembershipPage() {
           </p>
         )}
       </div>
-    </main>
+    </section>
   );
 }
 
 function AdminMembershipPending() {
   return (
-    <main className="page-wrap mx-auto max-w-5xl px-4 py-12">
+    <section>
       <Skeleton className="h-8 w-56" />
       <Skeleton className="mt-3 h-4 w-96 max-w-full" />
       <div className="mt-6 space-y-4">
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
       </div>
-    </main>
+    </section>
   );
 }

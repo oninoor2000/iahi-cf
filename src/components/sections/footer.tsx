@@ -36,19 +36,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground">
-                IAHI
-              </div>
-              <div>
-                <p className="text-xs leading-tight font-semibold text-sidebar-foreground/80">
-                  Perhimpunan Informatika
-                </p>
-                <p className="text-xs leading-tight font-semibold text-sidebar-foreground/80">
-                  Kesehatan Indonesia
-                </p>
-              </div>
-            </div>
+            <img
+              src="/iahi-logo-horizontal.png"
+              alt="Indonesian Association of Health Informatics"
+              className="mb-4 h-auto w-full max-w-[340px] object-contain"
+            />
             <p className="max-w-xs text-sm leading-relaxed text-sidebar-foreground/80">
               Independent and non-profit professional organization advancing
               health informatics through collaboration, scientific exchange, and
