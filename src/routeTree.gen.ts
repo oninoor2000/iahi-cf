@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
@@ -34,6 +35,11 @@ import { Route as ApiProofsSplatRouteImport } from './routes/api/proofs/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAssetsSplatRouteImport } from './routes/api/assets/$'
 
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
   id: '/terms-and-conditions',
   path: '/terms-and-conditions',
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/members/verify': typeof MembersVerifyRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/members/verify': typeof MembersVerifyRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/members/verify': typeof MembersVerifyRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
+    | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/members/verify'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
+    | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/members/verify'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/terms-and-conditions'
+    | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/members/verify'
@@ -325,6 +337,7 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
+  UnauthorizedRoute: typeof UnauthorizedRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminMembershipRoute: typeof AdminMembershipRoute
   MembershipManageRoute: typeof MembershipManageRoute
@@ -335,6 +348,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unauthorized': {
+      id: '/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms-and-conditions': {
       id: '/terms-and-conditions'
       path: '/terms-and-conditions'
@@ -551,6 +571,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
+  UnauthorizedRoute: UnauthorizedRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminMembershipRoute: AdminMembershipRoute,
   MembershipManageRoute: MembershipManageRoute,

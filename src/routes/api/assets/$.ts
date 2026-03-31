@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getFrequentR2Binding } from "@/server/env.server";
+import { getFrequentR2Binding } from "@/server/api/env.server";
 
 export const Route = createFileRoute("/api/assets/$")({
   server: {

@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/d1";
 
 import { schema } from "./tables";
-import { getDbBinding } from "@/server/env.server";
+import { getDbBinding } from "@/server/api/env.server";
 
 /**
  * Drizzle client for this Worker’s D1 binding. Cloudflare Workers do not use

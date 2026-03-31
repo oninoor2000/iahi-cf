@@ -14,7 +14,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { withCloudflare } from "better-auth-cloudflare";
 import { user as userTable } from "@/db/auth.schema";
 import { eq } from "drizzle-orm";
-import { getKvBinding } from "@/server/env.server";
+import { getKvBinding } from "@/server/api/env.server";
 
 const db = getDb();
 const cloudflareOptions = {

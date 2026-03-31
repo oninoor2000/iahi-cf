@@ -21,13 +21,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { queryKeys } from "@/query/keys";
-import { getMyProfileFn } from "@/server/profile.functions";
+import { getMyProfileFn } from "@/server/api/profile.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CreditCardIcon, SparklesIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { getMyMembershipFn } from "@/server/membership.functions";
+import { getMyMembershipFn } from "@/server/api/membership.functions";
 
 export const Route = createFileRoute("/profile/membership")({
   component: ProfileMembershipPage,
@@ -72,7 +72,8 @@ function ProfileMembershipPage() {
       )}`
     : "";
   const cardName = (user?.name ?? "Your name").trim() || "Your name";
-  const cardEmail = (user?.email ?? "you@example.com").trim() || "you@example.com";
+  const cardEmail =
+    (user?.email ?? "you@example.com").trim() || "you@example.com";
   const cardStatus = status.replace(/_/g, " ");
   const cardValidUntil = membershipData?.membership?.validUntil
     ? new Date(membershipData.membership.validUntil).toLocaleDateString()
@@ -148,7 +149,13 @@ function ProfileMembershipPage() {
                 preserveAspectRatio="xMidYMid meet"
               >
                 <defs>
-                  <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient
+                    id="cardBg"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="hsl(224 80% 94%)" />
                     <stop offset="55%" stopColor="hsl(0 0% 100%)" />
                     <stop offset="100%" stopColor="hsl(0 0% 97%)" />
@@ -158,7 +165,13 @@ function ProfileMembershipPage() {
                   </clipPath>
                 </defs>
 
-                <rect x="0" y="0" width="860" height="542" fill="url(#cardBg)" />
+                <rect
+                  x="0"
+                  y="0"
+                  width="860"
+                  height="542"
+                  fill="url(#cardBg)"
+                />
                 <rect
                   x="1"
                   y="1"
@@ -170,10 +183,22 @@ function ProfileMembershipPage() {
                   stroke="hsl(0 0% 84%)"
                 />
 
-                <text x="44" y="52" fontSize="18" fontWeight="700" fill="hsl(222 20% 16%)">
+                <text
+                  x="44"
+                  y="52"
+                  fontSize="18"
+                  fontWeight="700"
+                  fill="hsl(222 20% 16%)"
+                >
                   IAHI Digital Member ID
                 </text>
-                <text x="764" y="52" fontSize="14" textAnchor="end" fill="hsl(215 12% 42%)">
+                <text
+                  x="764"
+                  y="52"
+                  fontSize="14"
+                  textAnchor="end"
+                  fill="hsl(215 12% 42%)"
+                >
                   Card preview
                 </text>
 
@@ -201,14 +226,28 @@ function ProfileMembershipPage() {
                   </text>
                 )}
 
-                <text x="184" y="160" fontSize="30" fontWeight="700" fill="hsl(222 20% 16%)">
+                <text
+                  x="184"
+                  y="160"
+                  fontSize="30"
+                  fontWeight="700"
+                  fill="hsl(222 20% 16%)"
+                >
                   {truncateText(cardName, 30)}
                 </text>
                 <text x="184" y="196" fontSize="18" fill="hsl(215 12% 42%)">
                   {truncateText(cardEmail, 42)}
                 </text>
 
-                <rect x="650" y="102" width="160" height="160" rx="10" ry="10" fill="white" />
+                <rect
+                  x="650"
+                  y="102"
+                  width="160"
+                  height="160"
+                  rx="10"
+                  ry="10"
+                  fill="white"
+                />
                 <rect
                   x="650"
                   y="102"
@@ -294,7 +333,13 @@ function ProfileMembershipPage() {
                   {membershipData?.membership?.cardVersion ?? "—"}
                 </text>
 
-                <line x1="44" y1="452" x2="816" y2="452" stroke="hsl(0 0% 84%)" />
+                <line
+                  x1="44"
+                  y1="452"
+                  x2="816"
+                  y2="452"
+                  stroke="hsl(0 0% 84%)"
+                />
                 <text x="44" y="488" fontSize="16" fill="hsl(215 12% 42%)">
                   {isActive ? "Ready for verify/check-in" : "Preview mode"}
                 </text>

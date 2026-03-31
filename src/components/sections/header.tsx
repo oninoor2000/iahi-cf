@@ -10,9 +10,10 @@ import { USER_ROLES } from "@/db/auth.schema";
 import type { SessionUserWithRole } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import { queryKeys } from "@/query/keys";
-import { getMyProfileFn } from "@/server/profile.functions";
+import { getMyProfileFn } from "@/server/api/profile.functions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import {
   DropdownMenu,
@@ -55,7 +56,7 @@ function isAdminRole(user: SessionUserWithRole | undefined): boolean {
 /** Desktop inline nav starts at `lg` so tablets (e.g. iPad mini) keep the mobile sheet. */
 const Navbar = () => {
   const navigate = useNavigate();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
   const user = session?.user as SessionUserWithRole | undefined;
   const signedIn = Boolean(user);
   const showAdmin = isAdminRole(user);
@@ -108,7 +109,9 @@ const Navbar = () => {
 
         <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
-          {signedIn ? (
+          {isSessionPending ? (
+            <Skeleton className="hidden h-10 w-10 lg:block" />
+          ) : signedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -264,6 +267,8 @@ const Navbar = () => {
                         Sign out
                       </Button>
                     </SheetClose>
+                  ) : isSessionPending ? (
+                    <Skeleton className="h-10 w-full" />
                   ) : (
                     <SheetClose asChild>
                       <Button

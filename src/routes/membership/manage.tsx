@@ -19,8 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
+import { requireAuthenticatedUser } from "@/lib/route-guards";
 import {
   INDONESIA_PROVINCES,
   INDONESIA_PROVINCE_OPTIONS,
@@ -32,19 +34,26 @@ import {
   getMembershipJoinGuideFn,
   getMyMembershipFn,
   uploadMembershipProofFn,
-} from "@/server/membership.functions";
-import type { MembershipApplicantInput } from "@/server/membership.functions";
+} from "@/server/api/membership.functions";
+import type { MembershipApplicantInput } from "@/server/api/membership.functions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/membership/manage")({
+  beforeLoad: async ({ location }) => {
+    await requireAuthenticatedUser(location);
+  },
   component: MembershipManagePage,
+  pendingComponent: MembershipManagePending,
 });
 
 type InstitutionType = MembershipApplicantInput["institutionType"];
-type ApplicantFormState = Omit<MembershipApplicantInput, "province" | "institutionType"> & {
+type ApplicantFormState = Omit<
+  MembershipApplicantInput,
+  "province" | "institutionType"
+> & {
   province: MembershipApplicantInput["province"] | "";
   institutionType: InstitutionType | "";
 };
@@ -54,7 +63,10 @@ type ProvinceOption = {
   label: string;
 };
 
-const INSTITUTION_TYPE_OPTIONS: ReadonlyArray<{ value: InstitutionType; label: string }> = [
+const INSTITUTION_TYPE_OPTIONS: ReadonlyArray<{
+  value: InstitutionType;
+  label: string;
+}> = [
   { value: "individu", label: "Individu" },
   { value: "institusi", label: "Institusi" },
 ];
@@ -85,18 +97,19 @@ function MembershipManagePage() {
   const [proofFile, setProofFile] = React.useState<File | null>(null);
   const [payerNote, setPayerNote] = React.useState("");
   const [isResending, setIsResending] = React.useState(false);
-  const [applicantForm, setApplicantForm] = React.useState<ApplicantFormState>(emptyApplicantForm);
+  const [applicantForm, setApplicantForm] =
+    React.useState<ApplicantFormState>(emptyApplicantForm);
 
   const guideQuery = useQuery({
     queryKey: queryKeys.membership.guide(),
     queryFn: getMembershipJoinGuideFn,
-    enabled: Boolean(session?.user),
+    enabled: true,
   });
 
   const membershipQuery = useQuery({
     queryKey: queryKeys.membership.me(),
     queryFn: getMyMembershipFn,
-    enabled: Boolean(session?.user),
+    enabled: true,
   });
 
   const currentMembership = membershipQuery.data?.membership;
@@ -109,12 +122,14 @@ function MembershipManagePage() {
       profession: currentMembership.profession ?? "",
       phone: currentMembership.phone ?? "",
       address: currentMembership.address ?? "",
-      province: currentMembership.province && isProvince(currentMembership.province)
-        ? currentMembership.province
-        : "",
+      province:
+        currentMembership.province && isProvince(currentMembership.province)
+          ? currentMembership.province
+          : "",
       institutionName: currentMembership.institutionName ?? "",
       institutionType:
-        currentMembership.institutionType && isInstitutionType(currentMembership.institutionType)
+        currentMembership.institutionType &&
+        isInstitutionType(currentMembership.institutionType)
           ? currentMembership.institutionType
           : "",
       contactPerson: currentMembership.contactPerson ?? "",
@@ -126,15 +141,21 @@ function MembershipManagePage() {
       createMembershipApplicationFn({ data }),
     onSuccess: async (res) => {
       if (res.reused) {
-        toast.info("Your membership request already exists. Continue with payment.");
+        toast.info(
+          "Your membership request already exists. Continue with payment.",
+        );
       } else {
         toast.success("Membership request saved. Continue with payment.");
       }
-      await queryClient.invalidateQueries({ queryKey: queryKeys.membership.all });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.membership.all,
+      });
     },
     onError: (err) =>
       toast.error(
-        err instanceof Error ? err.message : "Failed to submit membership request",
+        err instanceof Error
+          ? err.message
+          : "Failed to submit membership request",
       ),
   });
 
@@ -143,7 +164,9 @@ function MembershipManagePage() {
       if (!proofFile) throw new Error("Please select a transfer proof file.");
       const membershipId = membershipQuery.data?.membership?.id;
       if (!membershipId) {
-        throw new Error("Membership request not found. Submit the agreement first.");
+        throw new Error(
+          "Membership request not found. Submit the agreement first.",
+        );
       }
       const fd = new FormData();
       fd.set("membershipId", membershipId);
@@ -152,13 +175,19 @@ function MembershipManagePage() {
       return uploadMembershipProofFn({ data: fd });
     },
     onSuccess: async () => {
-      toast.success("Transfer proof submitted. Waiting for admin verification.");
+      toast.success(
+        "Transfer proof submitted. Waiting for admin verification.",
+      );
       setProofFile(null);
       setPayerNote("");
-      await queryClient.invalidateQueries({ queryKey: queryKeys.membership.all });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.membership.all,
+      });
     },
     onError: (err) =>
-      toast.error(err instanceof Error ? err.message : "Failed to submit transfer proof"),
+      toast.error(
+        err instanceof Error ? err.message : "Failed to submit transfer proof",
+      ),
   });
 
   const statusLabel = React.useMemo(() => {
@@ -177,7 +206,11 @@ function MembershipManagePage() {
   }, [currentMembership?.status]);
 
   const activeStage = React.useMemo<
-    "agreement" | "waiting_payment" | "waiting_verification" | "active" | "rejected"
+    | "agreement"
+    | "waiting_payment"
+    | "waiting_verification"
+    | "active"
+    | "rejected"
   >(() => {
     const s = currentMembership?.status;
     if (!currentMembership) return "agreement";
@@ -198,7 +231,9 @@ function MembershipManagePage() {
   const selectedProvince = React.useMemo<ProvinceOption | null>(() => {
     if (!applicantForm.province) return null;
     return (
-      INDONESIA_PROVINCE_OPTIONS.find((option) => option.value === applicantForm.province) ?? null
+      INDONESIA_PROVINCE_OPTIONS.find(
+        (option) => option.value === applicantForm.province,
+      ) ?? null
     );
   }, [applicantForm.province]);
 
@@ -222,22 +257,17 @@ function MembershipManagePage() {
     <main className="page-wrap mx-auto w-full max-w-4xl px-4 py-10">
       <h1 className="text-2xl font-semibold tracking-tight">Join Membership</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Follow these steps: complete applicant details and consent, transfer to the official
-        account, submit proof, then wait for admin verification.
+        Follow these steps: complete applicant details and consent, transfer to
+        the official account, submit proof, then wait for admin verification.
       </p>
 
-      {!session?.user ? (
-        <Alert className="mt-6">
-          <AlertTitle>Sign in required</AlertTitle>
-          <AlertDescription>Please sign in to manage your membership.</AlertDescription>
-        </Alert>
-      ) : (
-        <div className="mt-6 space-y-6">
-          {!emailVerified ? (
-            <Alert>
+      <div className="mt-6 space-y-6">
+        {!emailVerified ? (
+          <Alert>
               <AlertTitle>Email verification required</AlertTitle>
               <AlertDescription>
-                Verify your email address before submitting membership enrollment.
+                Verify your email address before submitting membership
+                enrollment.
               </AlertDescription>
               <div className="mt-3">
                 <Button
@@ -247,21 +277,27 @@ function MembershipManagePage() {
                   disabled={isResending}
                   onClick={async () => {
                     const home =
-                      typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+                      typeof window !== "undefined"
+                        ? `${window.location.origin}/`
+                        : "/";
                     setIsResending(true);
                     try {
                       const email = user?.email;
-                      if (!email) throw new Error("Email not found in session.");
+                      if (!email)
+                        throw new Error("Email not found in session.");
                       const res = await authClient.sendVerificationEmail({
                         email,
                         callbackURL: home,
                       });
                       if (res.error) {
                         throw new Error(
-                          res.error.message ?? "Could not send verification email.",
+                          res.error.message ??
+                            "Could not send verification email.",
                         );
                       }
-                      toast.success("Verification email sent. Check your inbox.");
+                      toast.success(
+                        "Verification email sent. Check your inbox.",
+                      );
                     } catch (err) {
                       toast.error(
                         err instanceof Error
@@ -276,9 +312,9 @@ function MembershipManagePage() {
                   {isResending ? "Sending..." : "Resend verification email"}
                 </Button>
               </div>
-            </Alert>
-          ) : null}
-          <Card>
+          </Alert>
+        ) : null}
+        <Card>
             <CardHeader>
               <CardTitle>Membership stages</CardTitle>
             </CardHeader>
@@ -292,25 +328,33 @@ function MembershipManagePage() {
               >
                 1. Applicant data & consent
               </Badge>
-              <Badge variant={activeStage === "waiting_payment" ? "default" : "outline"}>
+              <Badge
+                variant={
+                  activeStage === "waiting_payment" ? "default" : "outline"
+                }
+              >
                 2. Waiting for payment
               </Badge>
               <Badge
-                variant={activeStage === "waiting_verification" ? "default" : "outline"}
+                variant={
+                  activeStage === "waiting_verification" ? "default" : "outline"
+                }
               >
                 3. Waiting for admin verification
               </Badge>
               <Badge variant={activeStage === "active" ? "default" : "outline"}>
                 4. Membership active
               </Badge>
-              <Badge variant={activeStage === "rejected" ? "destructive" : "outline"}>
+              <Badge
+                variant={activeStage === "rejected" ? "destructive" : "outline"}
+              >
                 Needs correction
               </Badge>
             </CardContent>
-          </Card>
+        </Card>
 
-          {needsConsent ? (
-            <Card>
+        {needsConsent ? (
+          <Card>
               <CardHeader>
                 <CardTitle>1) Applicant data & consent</CardTitle>
               </CardHeader>
@@ -326,8 +370,9 @@ function MembershipManagePage() {
                   </Alert>
                 ) : null}
                 <p className="text-muted-foreground">
-                  Complete the following fields and submit consent. Once submitted, your request
-                  will be saved with status Waiting for payment.
+                  Complete the following fields and submit consent. Once
+                  submitted, your request will be saved with status Waiting for
+                  payment.
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="grid gap-2">
@@ -336,7 +381,10 @@ function MembershipManagePage() {
                       id="profession"
                       value={applicantForm.profession}
                       onChange={(e) =>
-                        setApplicantForm((p) => ({ ...p, profession: e.target.value }))
+                        setApplicantForm((p) => ({
+                          ...p,
+                          profession: e.target.value,
+                        }))
                       }
                     />
                   </div>
@@ -347,7 +395,10 @@ function MembershipManagePage() {
                       type="tel"
                       value={applicantForm.phone}
                       onChange={(e) =>
-                        setApplicantForm((p) => ({ ...p, phone: e.target.value }))
+                        setApplicantForm((p) => ({
+                          ...p,
+                          phone: e.target.value,
+                        }))
                       }
                     />
                   </div>
@@ -359,7 +410,10 @@ function MembershipManagePage() {
                     rows={3}
                     value={applicantForm.address}
                     onChange={(e) =>
-                      setApplicantForm((p) => ({ ...p, address: e.target.value }))
+                      setApplicantForm((p) => ({
+                        ...p,
+                        address: e.target.value,
+                      }))
                     }
                   />
                 </div>
@@ -371,8 +425,15 @@ function MembershipManagePage() {
                       value={selectedProvince}
                       onValueChange={(value) => {
                         if (!value) return;
-                        if (typeof value === "object" && value !== null && "value" in value) {
-                          setApplicantForm((p) => ({ ...p, province: value.value }));
+                        if (
+                          typeof value === "object" &&
+                          value !== null &&
+                          "value" in value
+                        ) {
+                          setApplicantForm((p) => ({
+                            ...p,
+                            province: value.value,
+                          }));
                         }
                       }}
                       isItemEqualToValue={(a, b) => a.value === b.value}
@@ -403,7 +464,10 @@ function MembershipManagePage() {
                       id="institutionName"
                       value={applicantForm.institutionName}
                       onChange={(e) =>
-                        setApplicantForm((p) => ({ ...p, institutionName: e.target.value }))
+                        setApplicantForm((p) => ({
+                          ...p,
+                          institutionName: e.target.value,
+                        }))
                       }
                     />
                   </div>
@@ -416,7 +480,9 @@ function MembershipManagePage() {
                       onValueChange={(value) =>
                         setApplicantForm((p) => ({
                           ...p,
-                          institutionType: isInstitutionType(value) ? value : "",
+                          institutionType: isInstitutionType(value)
+                            ? value
+                            : "",
                         }))
                       }
                     >
@@ -438,7 +504,10 @@ function MembershipManagePage() {
                       id="contactPerson"
                       value={applicantForm.contactPerson}
                       onChange={(e) =>
-                        setApplicantForm((p) => ({ ...p, contactPerson: e.target.value }))
+                        setApplicantForm((p) => ({
+                          ...p,
+                          contactPerson: e.target.value,
+                        }))
                       }
                     />
                   </div>
@@ -448,14 +517,16 @@ function MembershipManagePage() {
                   disabled={consentMutation.isPending || !emailVerified}
                   onClick={submitApplicantConsent}
                 >
-                  {consentMutation.isPending ? "Submitting..." : "I agree and submit request"}
+                  {consentMutation.isPending
+                    ? "Submitting..."
+                    : "I agree and submit request"}
                 </Button>
               </CardContent>
-            </Card>
-          ) : null}
+          </Card>
+        ) : null}
 
-          {showTransferSection ? (
-            <>
+        {showTransferSection ? (
+          <>
               <Card>
                 <CardHeader>
                   <CardTitle>2) Transfer instructions</CardTitle>
@@ -467,12 +538,16 @@ function MembershipManagePage() {
                       {guideQuery.data?.guide.bankName ?? "-"}
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Account name</span>:{" "}
-                      {guideQuery.data?.guide.accountName ?? "-"}
+                      <span className="text-muted-foreground">
+                        Account name
+                      </span>
+                      : {guideQuery.data?.guide.accountName ?? "-"}
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Account number</span>:{" "}
-                      {guideQuery.data?.guide.accountNumber ?? "-"}
+                      <span className="text-muted-foreground">
+                        Account number
+                      </span>
+                      : {guideQuery.data?.guide.accountNumber ?? "-"}
                     </div>
                     <div>
                       <span className="text-muted-foreground">Amount</span>:{" "}
@@ -499,7 +574,9 @@ function MembershipManagePage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="space-y-2 text-sm">
-                      <p className="font-medium">Your transfer proof should include:</p>
+                      <p className="font-medium">
+                        Your transfer proof should include:
+                      </p>
                       <ul className="list-disc space-y-1 pl-4 text-muted-foreground">
                         {guideQuery.data?.guide.uploadChecklist.map((item) => (
                           <li key={item}>{item}</li>
@@ -512,11 +589,15 @@ function MembershipManagePage() {
                         id="proof"
                         type="file"
                         accept="image/*,application/pdf"
-                        onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
+                        onChange={(e) =>
+                          setProofFile(e.target.files?.[0] ?? null)
+                        }
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="payerNote">Transfer note (optional)</Label>
+                      <Label htmlFor="payerNote">
+                        Transfer note (optional)
+                      </Label>
                       <Input
                         id="payerNote"
                         value={payerNote}
@@ -527,7 +608,9 @@ function MembershipManagePage() {
                     <Button
                       type="button"
                       onClick={() => void proofMutation.mutateAsync()}
-                      disabled={!proofFile || proofMutation.isPending || !emailVerified}
+                      disabled={
+                        !proofFile || proofMutation.isPending || !emailVerified
+                      }
                     >
                       {proofMutation.isPending
                         ? "Submitting..."
@@ -536,29 +619,39 @@ function MembershipManagePage() {
                   </CardContent>
                 </Card>
               ) : null}
-            </>
-          ) : null}
+          </>
+        ) : null}
 
-          <Card>
+        <Card>
             <CardHeader>
               <CardTitle>Process status</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               {membershipQuery.isPending ? (
-                <p className="text-muted-foreground">Loading status...</p>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
               ) : !currentMembership ? (
                 <>
                   <div>
-                    <span className="text-muted-foreground">Current status</span>: No request yet
+                    <span className="text-muted-foreground">
+                      Current status
+                    </span>
+                    : No request yet
                   </div>
                   <p className="text-muted-foreground">
-                    Complete the applicant form and consent section above to start.
+                    Complete the applicant form and consent section above to
+                    start.
                   </p>
                 </>
               ) : (
                 <>
                   <div>
-                    <span className="text-muted-foreground">Current status</span>: {statusLabel}
+                    <span className="text-muted-foreground">
+                      Current status
+                    </span>
+                    : {statusLabel}
                   </div>
                   <div className="text-muted-foreground">
                     {currentMembership.status === "active"
@@ -574,9 +667,21 @@ function MembershipManagePage() {
                 </>
               )}
             </CardContent>
-          </Card>
-        </div>
-      )}
+        </Card>
+      </div>
+    </main>
+  );
+}
+
+function MembershipManagePending() {
+  return (
+    <main className="page-wrap mx-auto w-full max-w-4xl px-4 py-10">
+      <Skeleton className="h-8 w-56" />
+      <Skeleton className="mt-3 h-4 w-full max-w-2xl" />
+      <div className="mt-6 space-y-4">
+        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-52 w-full" />
+      </div>
     </main>
   );
 }

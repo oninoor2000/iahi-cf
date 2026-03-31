@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import type { THEME_MODE_TYPE } from "@/lib/constants";
-import { setValueToCookieFn } from "@/server/cookie.functions";
+import { setValueToCookieFn } from "@/server/api/cookie.functions";
 
 type ThemeProviderProps = {
   children: React.ReactNode;

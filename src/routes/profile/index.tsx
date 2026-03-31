@@ -14,7 +14,7 @@ import {
   getMyProfileFn,
   updateMyProfileFn,
   uploadAvatarFn,
-} from "@/server/profile.functions";
+} from "@/server/api/profile.functions";
 
 export const Route = createFileRoute("/profile/")({
   component: ProfilePersonalInfoPage,
@@ -154,7 +154,9 @@ function ProfilePersonalInfoPage() {
                 <Textarea
                   id="bio"
                   value={form.bio}
-                  onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, bio: e.target.value }))
+                  }
                   placeholder="Brief description for your profile"
                   disabled={profileQuery.isPending}
                 />
@@ -180,4 +182,3 @@ function ProfilePersonalInfoPage() {
     </Card>
   );
 }
-

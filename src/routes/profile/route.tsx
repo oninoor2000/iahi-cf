@@ -19,8 +19,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
+import { requireAuthenticatedUser } from "@/lib/route-guards";
 import { queryKeys } from "@/query/keys";
-import { getMyMembershipFn } from "@/server/membership.functions";
+import { getMyMembershipFn } from "@/server/api/membership.functions";
 import { useQuery } from "@tanstack/react-query";
 import {
   Link,
@@ -92,6 +93,9 @@ const NAV_ITEMS: ProfileNavItem[] = [
 ];
 
 export const Route = createFileRoute("/profile")({
+  beforeLoad: async ({ location }) => {
+    await requireAuthenticatedUser(location);
+  },
   head: () => ({
     meta: [
       { title: "Profile | IAHI" },
@@ -103,17 +107,17 @@ export const Route = createFileRoute("/profile")({
 
 function ProfileLayoutRoute() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const user = session?.user;
   const emailVerified = Boolean(user?.emailVerified);
-  const [isResendingVerification, setIsResendingVerification] = React.useState(false);
+  const [isResendingVerification, setIsResendingVerification] =
+    React.useState(false);
   const membershipQuery = useQuery({
     queryKey: queryKeys.membership.me(),
     queryFn: getMyMembershipFn,
     enabled: Boolean(user),
   });
   const showJoinMembership =
-    Boolean(user) &&
     pathname !== "/profile/membership" &&
     !membershipQuery.isPending &&
     !membershipQuery.data?.isActive;
@@ -129,11 +133,6 @@ function ProfileLayoutRoute() {
             Manage your personal information and preferences.
           </p>
         </div>
-        {!isPending && !user ? (
-          <Button asChild>
-            <Link to="/sign-in">Sign in</Link>
-          </Button>
-        ) : null}
       </div>
 
       <Separator className="my-6" />
@@ -175,25 +174,13 @@ function ProfileLayoutRoute() {
         </aside>
 
         <section className="min-w-0">
-          {!isPending && !user ? (
-            <div className="rounded-lg border border-border/60 p-6">
-              <h2 className="text-base font-semibold">Sign in required</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Please sign in to manage your profile and membership settings.
-              </p>
-              <div className="mt-4">
-                <Button asChild>
-                  <Link to="/sign-in">Go to Sign in</Link>
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <>
-              {!emailVerified ? (
-                <Alert className="mb-4">
+          <>
+            {!emailVerified ? (
+              <Alert className="mb-4">
                   <AlertTitle>Email verification required</AlertTitle>
                   <AlertDescription>
-                    Verify your email before accessing membership enrollment and other protected actions.
+                    Verify your email before accessing membership enrollment and
+                    other protected actions.
                   </AlertDescription>
                   <AlertAction>
                     <Button
@@ -202,7 +189,9 @@ function ProfileLayoutRoute() {
                       disabled={isResendingVerification}
                       onClick={async () => {
                         const home =
-                          typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+                          typeof window !== "undefined"
+                            ? `${window.location.origin}/`
+                            : "/";
                         const email = user?.email;
                         if (!email) {
                           toast.error("Email not found for this session.");
@@ -216,10 +205,13 @@ function ProfileLayoutRoute() {
                           });
                           if (res.error) {
                             throw new Error(
-                              res.error.message ?? "Could not send verification email.",
+                              res.error.message ??
+                                "Could not send verification email.",
                             );
                           }
-                          toast.success("Verification email sent. Check your inbox.");
+                          toast.success(
+                            "Verification email sent. Check your inbox.",
+                          );
                         } catch (err) {
                           toast.error(
                             err instanceof Error
@@ -231,13 +223,15 @@ function ProfileLayoutRoute() {
                         }
                       }}
                     >
-                      {isResendingVerification ? "Sending..." : "Resend verification email"}
+                      {isResendingVerification
+                        ? "Sending..."
+                        : "Resend verification email"}
                     </Button>
                   </AlertAction>
-                </Alert>
-              ) : null}
-              {showJoinMembership ? (
-                <Alert className="mb-4">
+              </Alert>
+            ) : null}
+            {showJoinMembership ? (
+              <Alert className="mb-4">
                   <SparklesIcon aria-hidden />
                   <AlertTitle>Unlock your digital member card</AlertTitle>
                   <AlertDescription>
@@ -277,11 +271,10 @@ function ProfileLayoutRoute() {
                       </AlertDialogContent>
                     </AlertDialog>
                   </AlertAction>
-                </Alert>
-              ) : null}
-              <Outlet />
-            </>
-          )}
+              </Alert>
+            ) : null}
+            <Outlet />
+          </>
         </section>
       </div>
     </main>

@@ -1,11 +1,13 @@
 import { SignUpForm } from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { redirectIfAuthenticated } from "@/lib/route-guards";
 import { ArrowLeftIcon } from "lucide-react";
-import * as React from "react";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/sign-up")({
+  beforeLoad: async () => {
+    await redirectIfAuthenticated();
+  },
   head: () => ({
     meta: [
       { title: "Sign up | IAHI" },
@@ -19,20 +21,6 @@ export const Route = createFileRoute("/sign-up")({
 });
 
 function SignUpPage() {
-  const navigate = useNavigate();
-  const { data: session, isPending } = authClient.useSession();
-
-  React.useEffect(() => {
-    if (isPending) return;
-    if (session?.user) {
-      void navigate({ to: "/" });
-    }
-  }, [isPending, navigate, session?.user]);
-
-  if (!isPending && session?.user) {
-    return null;
-  }
-
   return (
     <main className="page-wrap flex min-h-svh flex-col">
       <div className="mx-auto w-full max-w-6xl px-4 pt-6">

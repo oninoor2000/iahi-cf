@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
-import { changePasswordFn } from "@/server/profile.functions";
+import { changePasswordFn } from "@/server/api/profile.functions";
 
 export const Route = createFileRoute("/profile/security")({
   component: ProfileSecurityPage,
@@ -37,7 +37,9 @@ function ProfileSecurityPage() {
       toast.success("Password updated");
       setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to change password");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to change password",
+      );
     } finally {
       setSaving(false);
     }
@@ -101,4 +103,3 @@ function ProfileSecurityPage() {
     </Card>
   );
 }
-
