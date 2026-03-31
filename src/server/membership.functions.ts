@@ -4,17 +4,20 @@ import {
   membership as membershipTable,
   membershipPayment as membershipPaymentTable,
 } from "@/db/membership.schema";
-import { getDb } from "@/db";
 import { user as userTable } from "@/db/auth.schema";
-import { auth } from "@/lib/auth";
 import { isActiveMembership } from "@/lib/membership";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
 import { desc, eq } from "drizzle-orm";
 import type { MembershipStatus } from "@/db/membership.schema";
 import { getInfrequentR2Binding } from "@/server/env.server";
 import { INDONESIA_PROVINCES } from "@/lib/indonesia-provinces";
 import { z } from "zod";
+import {
+  getServerContext,
+  requireAdminUser,
+  requireSessionUser,
+  requireVerifiedUser,
+} from "@/server/server-context";
 
 export type MembershipApplicantFields = {
   profession: string | null;
@@ -60,41 +63,6 @@ export type MembershipJoinGuide = {
   transferMethods: readonly string[];
   uploadChecklist: readonly string[];
 };
-
-type SessionUser = {
-  id: string;
-  role?: string;
-  emailVerified: boolean;
-};
-
-async function requireSessionUser(): Promise<SessionUser> {
-  const request = getRequest();
-  const session = await auth.api.getSession({ headers: request.headers });
-  const sessionUser = session?.user as
-    | { id?: string; role?: string; emailVerified?: boolean }
-    | undefined;
-  const userId = sessionUser?.id;
-  if (!userId) throw new Error("Unauthorized");
-  return {
-    id: userId,
-    role: sessionUser?.role,
-    emailVerified: Boolean(sessionUser?.emailVerified),
-  };
-}
-
-async function requireAdminUser(): Promise<SessionUser> {
-  const user = await requireSessionUser();
-  if (user.role !== "administrator") throw new Error("Forbidden");
-  return user;
-}
-
-async function requireVerifiedUser(): Promise<SessionUser> {
-  const user = await requireSessionUser();
-  if (!user.emailVerified) {
-    throw new Error("Please verify your email before joining membership.");
-  }
-  return user;
-}
 
 function base64UrlEncode(value: Uint8Array): string {
   const str = btoa(String.fromCharCode(...value));
@@ -178,8 +146,9 @@ export const getMembershipJoinGuideFn = createServerFn({ method: "GET" }).handle
 export const createMembershipApplicationFn = createServerFn({ method: "POST" })
   .inputValidator(membershipApplicantInputSchema)
   .handler(async ({ data }) => {
-    const user = await requireVerifiedUser();
-    const db = getDb();
+    const ctx = getServerContext();
+    const user = await requireVerifiedUser(ctx);
+    const db = ctx.db;
 
     const [existing] = await db
       .select({
@@ -227,8 +196,9 @@ export const uploadMembershipProofFn = createServerFn({ method: "POST" })
     return { membershipId, file, payerNote: typeof payerNote === "string" ? payerNote : null };
   })
   .handler(async ({ data }) => {
-    const user = await requireVerifiedUser();
-    const db = getDb();
+    const ctx = getServerContext();
+    const user = await requireVerifiedUser(ctx);
+    const db = ctx.db;
     const [membership] = await db
       .select({
         id: membershipTable.id,
@@ -296,8 +266,9 @@ type PendingReviewItem = {
 
 export const listPendingMembershipReviewsFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ items: PendingReviewItem[] }> => {
-    await requireAdminUser();
-    const db = getDb();
+    const ctx = getServerContext();
+    await requireAdminUser(ctx);
+    const db = ctx.db;
     const memberships = await db
       .select({
         id: membershipTable.id,
@@ -358,8 +329,9 @@ export const reviewMembershipFn = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const admin = await requireAdminUser();
-    const db = getDb();
+    const ctx = getServerContext();
+    const admin = await requireAdminUser(ctx);
+    const db = ctx.db;
     const [m] = await db
       .select({
         id: membershipTable.id,
@@ -430,7 +402,8 @@ export const verifyMembershipByTokenFn = createServerFn({ method: "GET" })
     const membershipId = String(payload.membershipId ?? "");
     if (!membershipId) return { ok: false, reason: "Invalid payload" };
 
-    const db = getDb();
+    const ctx = getServerContext();
+    const db = ctx.db;
     const [row] = await db
       .select({
         id: membershipTable.id,
@@ -460,10 +433,11 @@ export const verifyMembershipByTokenFn = createServerFn({ method: "GET" })
 
 export const getMyMembershipFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ membership: MyMembership; isActive: boolean }> => {
-    const user = await requireSessionUser();
+    const ctx = getServerContext();
+    const user = await requireSessionUser(ctx);
     const userId = user.id;
 
-    const db = getDb();
+    const db = ctx.db;
     const [row] = await db
       .select({
         id: membershipTable.id,

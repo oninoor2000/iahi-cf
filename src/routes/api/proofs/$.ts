@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getInfrequentR2Binding } from "@/server/env.server";
-import { auth } from "@/lib/auth";
+import { getServerContext, requireAdminUser } from "@/server/server-context";
 
 export const Route = createFileRoute("/api/proofs/$")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const session = await auth.api.getSession({ headers: request.headers });
-        const role = (session?.user as { role?: string } | undefined)?.role;
-        if (role !== "administrator") {
+        const ctx = getServerContext(request);
+        try {
+          await requireAdminUser(ctx);
+        } catch {
           return new Response("Forbidden", { status: 403 });
         }
 

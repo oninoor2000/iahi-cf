@@ -1,7 +1,7 @@
 import { user as userTable } from "@/db/auth.schema";
-import { getDb } from "@/db";
 import { auth } from "@/lib/auth";
 import { getFrequentR2Binding } from "@/server/env.server";
+import { getServerContext, requireUserId } from "@/server/server-context";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
@@ -29,18 +29,11 @@ export type MyProfile = {
   image: string | null;
 };
 
-async function requireUserId(): Promise<string> {
-  const request = getRequest();
-  const session = await auth.api.getSession({ headers: request.headers });
-  const userId = (session?.user as { id?: string } | undefined)?.id;
-  if (!userId) throw new Error("Unauthorized");
-  return userId;
-}
-
 export const getMyProfileFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ profile: MyProfile }> => {
-    const userId = await requireUserId();
-    const db = getDb();
+    const ctx = getServerContext();
+    const userId = await requireUserId(ctx);
+    const db = ctx.db;
     const [row] = await db
       .select({
         id: userTable.id,
@@ -60,8 +53,9 @@ export const getMyProfileFn = createServerFn({ method: "GET" }).handler(
 export const updateMyProfileFn = createServerFn({ method: "POST" })
   .inputValidator((data: UpdateProfileInput) => updateProfileSchema.parse(data))
   .handler(async ({ data }): Promise<{ ok: true }> => {
-    const userId = await requireUserId();
-    const db = getDb();
+    const ctx = getServerContext();
+    const userId = await requireUserId(ctx);
+    const db = ctx.db;
     await db
       .update(userTable)
       .set({ name: data.name, bio: data.bio })
@@ -77,7 +71,8 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
     return { file };
   })
   .handler(async ({ data }): Promise<{ ok: true; imageUrl: string }> => {
-    const userId = await requireUserId();
+    const ctx = getServerContext();
+    const userId = await requireUserId(ctx);
     const file = data.file;
 
     if (file.size <= 0) throw new Error("Empty file");
@@ -106,7 +101,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
     });
 
     const imageUrl = `/api/assets/${encodeURIComponent(objectKey)}`;
-    const db = getDb();
+    const db = ctx.db;
     await db
       .update(userTable)
       .set({ image: imageUrl })
