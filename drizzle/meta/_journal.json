@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1774913337843,
+      "tag": "0000_magenta_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1774913587540,
+      "tag": "0001_chemical_toro",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1774924465761,
+      "tag": "0002_graceful_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1774931912309,
+      "tag": "0003_short_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1774978801360,
+      "tag": "0004_nice_ben_grimm",
+      "breakpoints": true
+    }
+  ]
+}

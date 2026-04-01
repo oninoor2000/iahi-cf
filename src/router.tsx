@@ -1,13 +1,26 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+
+import { createAppQueryClient } from "@/lib/query-client";
 import { routeTree } from "./routeTree.gen";
 
+export type { AppRouterContext } from "@/router-context";
+
 export function getRouter() {
+  const queryClient = createAppQueryClient();
   const router = createTanStackRouter({
     routeTree,
-
+    context: { queryClient },
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
+  });
+
+  setupRouterSsrQueryIntegration({
+    router,
+    queryClient,
+    // Provider lives in shell (__root) so SSR uses one React resolution (Cloudflare/Vite deps_ssr).
+    wrapQueryClient: false,
   });
 
   return router;

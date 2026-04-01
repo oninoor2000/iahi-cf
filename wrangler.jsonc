@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "iahi",
+  "name": "iahi-cf",
   // Set this to today's date
   "compatibility_date": "2026-03-17",
   "compatibility_flags": ["nodejs_compat"],
@@ -18,7 +18,31 @@
     {
       "binding": "DB",
       "database_name": "iahi-db",
-      "database_id": "9535de08-5cd3-44ab-8241-5b9ae13ef19b",
+      "database_id": "dfde5f72-a05f-48f4-9991-fb6bd2cd88c4",
+      "remote": true,
+    },
+  ],
+
+  // KV Namespace for Better Auth
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "b224e682ffd24456abba53983627fca6",
+
+      // Optional: preview_id used when running `wrangler dev` for local dev
+      "preview_id": "b224e682ffd24456abba53983627fca6", // This is the ID of the preview KV namespace for local development
+    },
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "iahiR2Infrequent",
+      "bucket_name": "iahi-confirmation-pay-r2",
+      "remote": true,
+    },
+    {
+      "binding": "iahiR2",
+      "bucket_name": "iahi-bucket-r2",
       "remote": true,
     },
   ],
@@ -26,11 +50,16 @@
   /**
    * Environment Variables (non-sensitive, VITE_ prefix for client-side)
    * Sensitive keys (SMTP) should be set via:
+   *   wrangler secret put BETTER_AUTH_SECRET
+   *   wrangler secret put BETTER_AUTH_API_KEY
    *   wrangler secret put SMTP_USER
    *   wrangler secret put SMTP_PASS
    */
   "vars": {
     "VITE_APP_URL": "https://iahi-cf.flaener.workers.dev",
+    "BETTER_AUTH_URL": "https://iahi-cf.flaener.workers.dev",
     "SMTP_FROM_NAME": "IAHI - Perhimpunan Informatika Kesehatan Indonesia",
+    "SMTP_HOST": "smtp.gmail.com",
+    "SMTP_PORT": "587",
   },
 }
