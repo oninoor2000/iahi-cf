@@ -9,8 +9,7 @@ import {
 import { USER_ROLES } from "@/db/auth.schema";
 import type { SessionUserWithRole } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
-import { queryKeys } from "@/query/keys";
-import { getMyProfileFn } from "@/server/api/profile.functions";
+import { profileMeQueryOptions } from "@/query/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,8 +62,7 @@ const Navbar = () => {
   const showAdmin = isAdminRole(user);
   const baseUrl = import.meta.env.VITE_APP_URL;
   const profileQuery = useQuery({
-    queryKey: queryKeys.profile.headerImage(),
-    queryFn: getMyProfileFn,
+    ...profileMeQueryOptions,
     enabled: signedIn,
   });
 

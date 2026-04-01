@@ -6,17 +6,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { queryKeys } from "@/query/keys";
-import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import * as React from "react";
-import { toast } from "sonner";
+import { profileMeQueryOptions } from "@/query/queries";
+import { ProfileSectionPending } from "@/components/profile/profile-pending";
 import {
-  getMyProfileFn,
   updateMyProfileFn,
   uploadAvatarFn,
 } from "@/server/api/profile.functions";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import * as React from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile/")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(profileMeQueryOptions),
+  pendingComponent: ProfileSectionPending,
   component: ProfilePersonalInfoPage,
 });
 
@@ -28,11 +32,7 @@ function ProfilePersonalInfoPage() {
     session?.user?.email?.slice(0, 1).toUpperCase() ??
     "?";
 
-  const profileQuery = useQuery({
-    queryKey: queryKeys.profile.me(),
-    queryFn: getMyProfileFn,
-    enabled: Boolean(session?.user),
-  });
+  const profileQuery = useSuspenseQuery(profileMeQueryOptions);
   const saveMutation = useMutation({
     mutationFn: (data: { name: string; bio: string }) =>
       updateMyProfileFn({ data }),
@@ -80,15 +80,7 @@ function ProfilePersonalInfoPage() {
     });
   }, [profileQuery.data?.profile]);
 
-  React.useEffect(() => {
-    if (profileQuery.error) {
-      toast.error(
-        profileQuery.error instanceof Error
-          ? profileQuery.error.message
-          : "Failed to load",
-      );
-    }
-  }, [profileQuery.error]);
+  const formBusy = profileQuery.isFetching;
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -144,7 +136,7 @@ function ProfilePersonalInfoPage() {
                     setForm((p) => ({ ...p, name: e.target.value }))
                   }
                   placeholder="Your full name"
-                  disabled={profileQuery.isPending}
+                  disabled={formBusy}
                   required
                 />
               </div>
@@ -158,7 +150,7 @@ function ProfilePersonalInfoPage() {
                     setForm((p) => ({ ...p, bio: e.target.value }))
                   }
                   placeholder="Brief description for your profile"
-                  disabled={profileQuery.isPending}
+                  disabled={formBusy}
                 />
               </div>
 
@@ -172,7 +164,7 @@ function ProfilePersonalInfoPage() {
           <div className="flex items-center justify-end gap-2">
             <Button
               type="submit"
-              disabled={saveMutation.isPending || profileQuery.isPending}
+              disabled={saveMutation.isPending || formBusy}
             >
               {saveMutation.isPending ? "Saving..." : "Save changes"}
             </Button>

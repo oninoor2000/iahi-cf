@@ -29,8 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import type { SessionUserWithRole } from "@/lib/auth";
-import { queryKeys } from "@/query/keys";
-import { getMyProfileFn } from "@/server/api/profile.functions";
+import { profileMeQueryOptions } from "@/query/queries";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -166,8 +165,7 @@ function AdminTopbarUserMenu() {
   const baseUrl = import.meta.env.VITE_APP_URL;
 
   const profileQuery = useQuery({
-    queryKey: queryKeys.profile.headerImage(),
-    queryFn: getMyProfileFn,
+    ...profileMeQueryOptions,
     enabled: signedIn,
   });
 

@@ -1,16 +1,18 @@
 import type { ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import {
   HeadContent,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
   type ErrorComponentProps,
+  useRouter,
   useRouterState,
 } from "@tanstack/react-router";
 
+import type { AppRouterContext } from "@/router-context";
 import { ThemeProvider } from "../components/providers/theme-provider";
-import { AppQueryClientProvider } from "@/components/providers/query-client-provider";
 
 import appCss from "../styles.css?url";
 import Footer from "@/components/sections/footer";
@@ -47,7 +49,7 @@ function SiteChrome({ children }: { children: ReactNode }) {
   );
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<AppRouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -100,6 +102,9 @@ function RootErrorComponent(props: ErrorComponentProps) {
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const queryClient = router.options.context.queryClient;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -107,12 +112,12 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
-        <AppQueryClientProvider>
+        <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <SiteChrome>{children}</SiteChrome>
             <Toaster position="bottom-right" richColors closeButton />
           </ThemeProvider>
-        </AppQueryClientProvider>
+        </QueryClientProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",

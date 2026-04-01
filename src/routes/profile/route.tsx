@@ -20,9 +20,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
 import { requireAuthenticatedUser } from "@/lib/route-guards";
-import { queryKeys } from "@/query/keys";
-import { getMyMembershipFn } from "@/server/api/membership.functions";
-import { useQuery } from "@tanstack/react-query";
+import {
+  membershipMeQueryOptions,
+  profileMeQueryOptions,
+} from "@/query/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Link,
   Outlet,
@@ -96,6 +98,11 @@ export const Route = createFileRoute("/profile")({
   beforeLoad: async ({ location }) => {
     await requireAuthenticatedUser(location);
   },
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(profileMeQueryOptions),
+      context.queryClient.ensureQueryData(membershipMeQueryOptions),
+    ]),
   head: () => ({
     meta: [
       { title: "Profile | IAHI" },
@@ -112,15 +119,10 @@ function ProfileLayoutRoute() {
   const emailVerified = Boolean(user?.emailVerified);
   const [isResendingVerification, setIsResendingVerification] =
     React.useState(false);
-  const membershipQuery = useQuery({
-    queryKey: queryKeys.membership.me(),
-    queryFn: getMyMembershipFn,
-    enabled: Boolean(user),
-  });
+  const membershipQuery = useSuspenseQuery(membershipMeQueryOptions);
   const showJoinMembership =
     pathname !== "/profile/membership" &&
-    !membershipQuery.isPending &&
-    !membershipQuery.data?.isActive;
+    !membershipQuery.data.isActive;
 
   return (
     <main className="page-wrap mx-auto w-full max-w-6xl px-4 py-10">
