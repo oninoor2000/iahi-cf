@@ -1,22 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(web)/profile/contact")({
-  component: ProfileContactPage,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/profile",
+      search: { section: "contact" },
+    });
+  },
 });
-
-function ProfileContactPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Contact</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">
-          Manage your account contact details.
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-

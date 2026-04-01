@@ -27,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { MEMBERSHIP_STATUS } from "@/db/membership.schema";
 import {
@@ -59,7 +58,6 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/membership")({
   component: AdminMembershipPage,
-  pendingComponent: AdminMembershipPending,
 });
 
 type MembershipFormMode = "create" | "edit";
@@ -358,7 +356,7 @@ function AdminMembershipPage() {
         totalPages={listQuery.data?.totalPages ?? 1}
         filters={filters}
         onFiltersChange={handleFiltersChange}
-        isLoading={listQuery.isFetching}
+        isLoading={listQuery.isPending || listQuery.isFetching}
         onCreate={openCreateDialog}
         onEdit={openEditDialog}
         onDelete={(row) => {
@@ -960,15 +958,3 @@ function AdminMembershipPage() {
   );
 }
 
-function AdminMembershipPending() {
-  return (
-    <section>
-      <Skeleton className="h-8 w-56" />
-      <Skeleton className="mt-3 h-4 w-96 max-w-full" />
-      <div className="mt-6 space-y-4">
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-48 w-full" />
-      </div>
-    </section>
-  );
-}

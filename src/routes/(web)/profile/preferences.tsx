@@ -1,22 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(web)/profile/preferences")({
-  component: ProfilePreferencesPage,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/profile",
+      search: { section: "preferences" },
+    });
+  },
 });
-
-function ProfilePreferencesPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Preferences</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">
-          Configure how you use the app.
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-

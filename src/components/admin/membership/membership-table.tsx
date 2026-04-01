@@ -51,6 +51,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { INDONESIA_PROVINCE_OPTIONS } from "@/lib/indonesia-provinces";
 import { MoreHorizontal } from "lucide-react";
 import * as React from "react";
@@ -305,11 +306,25 @@ export function MembershipTable({
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center">
-                Loading memberships...
-              </TableCell>
-            </TableRow>
+            <>
+              {Array.from({ length: Math.min(pageSize, 8) }, (_, i) => (
+                <TableRow key={`sk-${i}`}>
+                  {Array.from({ length: columns.length }, (_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="h-4 w-full max-w-[12rem]" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="py-2 text-center text-xs text-muted-foreground"
+                >
+                  Memuat data…
+                </TableCell>
+              </TableRow>
+            </>
           ) : table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
