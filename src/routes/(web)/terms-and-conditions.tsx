@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/terms-and-conditions")({
+export const Route = createFileRoute("/(web)/terms-and-conditions")({
   head: () => ({
     meta: [
       { title: "Terms and Conditions | IAHI" },

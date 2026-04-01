@@ -7,7 +7,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { changePasswordFn } from "@/server/api/profile.functions";
 
-export const Route = createFileRoute("/profile/security")({
+export const Route = createFileRoute("/(web)/profile/security")({
   component: ProfileSecurityPage,
 });
 

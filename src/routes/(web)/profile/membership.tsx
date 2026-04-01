@@ -30,7 +30,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CreditCardIcon, SparklesIcon } from "lucide-react";
 import * as React from "react";
 
-export const Route = createFileRoute("/profile/membership")({
+export const Route = createFileRoute("/(web)/profile/membership")({
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(profileMeQueryOptions),
@@ -59,7 +59,7 @@ function ProfileMembershipPage() {
   const verifyUrl = membershipData?.membership?.verifyUrl ?? "";
   const qrSrc = verifyUrl
     ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
-        `${typeof window !== "undefined" ? window.location.origin : ""}${verifyUrl}`,
+        `${typeof window !== `undefined` ? window.location.origin : ``}${verifyUrl}`,
       )}`
     : "";
   const cardName = (user?.name ?? "Your name").trim() || "Your name";

@@ -1,19 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/profile/preferences")({
-  component: ProfilePreferencesPage,
+export const Route = createFileRoute("/(web)/profile/contact")({
+  component: ProfileContactPage,
 });
 
-function ProfilePreferencesPage() {
+function ProfileContactPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Preferences</CardTitle>
+        <CardTitle>Contact</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground">
-          Configure how you use the app.
+          Manage your account contact details.
         </p>
       </CardContent>
     </Card>

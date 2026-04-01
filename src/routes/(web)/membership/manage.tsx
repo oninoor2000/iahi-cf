@@ -42,7 +42,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/membership/manage")({
+export const Route = createFileRoute("/(web)/membership/manage")({
   beforeLoad: async ({ location }) => {
     await requireAuthenticatedUser(location);
   },
@@ -662,7 +662,7 @@ function MembershipManagePage() {
                     <div>
                       <span className="text-muted-foreground">Amount</span>:{" "}
                       {guideQuery.data
-                        ? `${guideQuery.data.guide.currency} ${guideQuery.data.guide.amount.toLocaleString("id-ID")}`
+                        ? `${guideQuery.data.guide.currency} ${guideQuery.data.guide.amount.toLocaleString(`id-ID`)}`
                         : "-"}
                     </div>
                   </div>

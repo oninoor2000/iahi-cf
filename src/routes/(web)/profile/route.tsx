@@ -94,7 +94,7 @@ const NAV_ITEMS: ProfileNavItem[] = [
   },
 ];
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/(web)/profile")({
   beforeLoad: async ({ location }) => {
     await requireAuthenticatedUser(location);
   },

@@ -17,7 +17,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/profile/")({
+export const Route = createFileRoute("/(web)/profile/")({
   loader: ({ context }) =>
     context.queryClient.ensureQueryData(profileMeQueryOptions),
   pendingComponent: ProfileSectionPending,

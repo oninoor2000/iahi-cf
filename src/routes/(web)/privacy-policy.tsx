@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/privacy-policy")({
+export const Route = createFileRoute("/(web)/privacy-policy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy | IAHI" },

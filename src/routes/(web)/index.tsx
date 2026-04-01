@@ -5,7 +5,7 @@ import { PublicationsSection } from "@/components/home/publications-section";
 import AboutUs from "@/components/home/about-us";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/(web)/")({
   head: () => ({
     meta: [
       { title: "IAHI – Perhimpunan Informatika Kesehatan Indonesia" },

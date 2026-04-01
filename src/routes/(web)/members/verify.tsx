@@ -6,7 +6,7 @@ import { verifyMembershipByTokenFn } from "@/server/api/membership.functions";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/members/verify")({
+export const Route = createFileRoute("/(web)/members/verify")({
   validateSearch: (search: Record<string, unknown>) => ({
     token: typeof search.token === "string" ? search.token : "",
     mode: search.mode === "checkin" ? "checkin" : "verify",

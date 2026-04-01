@@ -10,41 +10,37 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
-import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as PublicationsRouteImport } from './routes/publications'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
-import { Route as MembersRouteImport } from './routes/members'
-import { Route as ContactUsRouteImport } from './routes/contact-us'
-import { Route as AgendaRouteImport } from './routes/agenda'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as ProfileRouteRouteImport } from './routes/profile/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as ProfileSocialLinksRouteImport } from './routes/profile/social-links'
-import { Route as ProfileSecurityRouteImport } from './routes/profile/security'
-import { Route as ProfilePreferencesRouteImport } from './routes/profile/preferences'
-import { Route as ProfileMembershipRouteImport } from './routes/profile/membership'
-import { Route as ProfileContactRouteImport } from './routes/profile/contact'
-import { Route as MembershipManageRouteImport } from './routes/membership/manage'
-import { Route as MembersVerifyRouteImport } from './routes/members/verify'
+import { Route as webRouteRouteImport } from './routes/(web)/route'
+import { Route as webIndexRouteImport } from './routes/(web)/index'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminMembershipRouteImport } from './routes/admin/membership'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as webTermsAndConditionsRouteImport } from './routes/(web)/terms-and-conditions'
+import { Route as webPublicationsRouteImport } from './routes/(web)/publications'
+import { Route as webPrivacyPolicyRouteImport } from './routes/(web)/privacy-policy'
+import { Route as webMembersRouteImport } from './routes/(web)/members'
+import { Route as webContactUsRouteImport } from './routes/(web)/contact-us'
+import { Route as webAgendaRouteImport } from './routes/(web)/agenda'
+import { Route as webAboutRouteImport } from './routes/(web)/about'
+import { Route as webProfileRouteRouteImport } from './routes/(web)/profile/route'
+import { Route as webProfileIndexRouteImport } from './routes/(web)/profile/index'
 import { Route as ApiProofsSplatRouteImport } from './routes/api/proofs/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAssetsSplatRouteImport } from './routes/api/assets/$'
+import { Route as webProfileSocialLinksRouteImport } from './routes/(web)/profile/social-links'
+import { Route as webProfileSecurityRouteImport } from './routes/(web)/profile/security'
+import { Route as webProfilePreferencesRouteImport } from './routes/(web)/profile/preferences'
+import { Route as webProfileMembershipRouteImport } from './routes/(web)/profile/membership'
+import { Route as webProfileContactRouteImport } from './routes/(web)/profile/contact'
+import { Route as webMembershipManageRouteImport } from './routes/(web)/membership/manage'
+import { Route as webMembersVerifyRouteImport } from './routes/(web)/members/verify'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
   path: '/unauthorized',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
-  id: '/terms-and-conditions',
-  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpRoute = SignUpRouteImport.update({
@@ -57,90 +53,19 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PublicationsRoute = PublicationsRouteImport.update({
-  id: '/publications',
-  path: '/publications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MembersRoute = MembersRouteImport.update({
-  id: '/members',
-  path: '/members',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactUsRoute = ContactUsRouteImport.update({
-  id: '/contact-us',
-  path: '/contact-us',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AgendaRoute = AgendaRouteImport.update({
-  id: '/agenda',
-  path: '/agenda',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRouteRoute = ProfileRouteRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const webRouteRoute = webRouteRouteImport.update({
+  id: '/(web)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
+const webIndexRoute = webIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileSocialLinksRoute = ProfileSocialLinksRouteImport.update({
-  id: '/social-links',
-  path: '/social-links',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfilePreferencesRoute = ProfilePreferencesRouteImport.update({
-  id: '/preferences',
-  path: '/preferences',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileMembershipRoute = ProfileMembershipRouteImport.update({
-  id: '/membership',
-  path: '/membership',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileContactRoute = ProfileContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const MembershipManageRoute = MembershipManageRouteImport.update({
-  id: '/membership/manage',
-  path: '/membership/manage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MembersVerifyRoute = MembersVerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
-  getParentRoute: () => MembersRoute,
+  getParentRoute: () => webRouteRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -157,6 +82,51 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const webTermsAndConditionsRoute = webTermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webPublicationsRoute = webPublicationsRouteImport.update({
+  id: '/publications',
+  path: '/publications',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webPrivacyPolicyRoute = webPrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webMembersRoute = webMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webContactUsRoute = webContactUsRouteImport.update({
+  id: '/contact-us',
+  path: '/contact-us',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webAgendaRoute = webAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webAboutRoute = webAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webProfileRouteRoute = webProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webProfileIndexRoute = webProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
 const ApiProofsSplatRoute = ApiProofsSplatRouteImport.update({
   id: '/api/proofs/$',
   path: '/api/proofs/$',
@@ -172,99 +142,137 @@ const ApiAssetsSplatRoute = ApiAssetsSplatRouteImport.update({
   path: '/api/assets/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const webProfileSocialLinksRoute = webProfileSocialLinksRouteImport.update({
+  id: '/social-links',
+  path: '/social-links',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
+const webProfileSecurityRoute = webProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
+const webProfilePreferencesRoute = webProfilePreferencesRouteImport.update({
+  id: '/preferences',
+  path: '/preferences',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
+const webProfileMembershipRoute = webProfileMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
+const webProfileContactRoute = webProfileContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => webProfileRouteRoute,
+} as any)
+const webMembershipManageRoute = webMembershipManageRouteImport.update({
+  id: '/membership/manage',
+  path: '/membership/manage',
+  getParentRoute: () => webRouteRoute,
+} as any)
+const webMembersVerifyRoute = webMembersVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => webMembersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/profile': typeof ProfileRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/agenda': typeof AgendaRoute
-  '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRouteWithChildren
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/profile': typeof webProfileRouteRouteWithChildren
+  '/about': typeof webAboutRoute
+  '/agenda': typeof webAgendaRoute
+  '/contact-us': typeof webContactUsRoute
+  '/members': typeof webMembersRouteWithChildren
+  '/privacy-policy': typeof webPrivacyPolicyRoute
+  '/publications': typeof webPublicationsRoute
+  '/terms-and-conditions': typeof webTermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/admin/users': typeof AdminUsersRoute
-  '/members/verify': typeof MembersVerifyRoute
-  '/membership/manage': typeof MembershipManageRoute
-  '/profile/contact': typeof ProfileContactRoute
-  '/profile/membership': typeof ProfileMembershipRoute
-  '/profile/preferences': typeof ProfilePreferencesRoute
-  '/profile/security': typeof ProfileSecurityRoute
-  '/profile/social-links': typeof ProfileSocialLinksRoute
-  '/profile/': typeof ProfileIndexRoute
+  '/': typeof webIndexRoute
+  '/members/verify': typeof webMembersVerifyRoute
+  '/membership/manage': typeof webMembershipManageRoute
+  '/profile/contact': typeof webProfileContactRoute
+  '/profile/membership': typeof webProfileMembershipRoute
+  '/profile/preferences': typeof webProfilePreferencesRoute
+  '/profile/security': typeof webProfileSecurityRoute
+  '/profile/social-links': typeof webProfileSocialLinksRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/proofs/$': typeof ApiProofsSplatRoute
+  '/profile/': typeof webProfileIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/agenda': typeof AgendaRoute
-  '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRouteWithChildren
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/about': typeof webAboutRoute
+  '/agenda': typeof webAgendaRoute
+  '/contact-us': typeof webContactUsRoute
+  '/members': typeof webMembersRouteWithChildren
+  '/privacy-policy': typeof webPrivacyPolicyRoute
+  '/publications': typeof webPublicationsRoute
+  '/terms-and-conditions': typeof webTermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/admin/users': typeof AdminUsersRoute
-  '/members/verify': typeof MembersVerifyRoute
-  '/membership/manage': typeof MembershipManageRoute
-  '/profile/contact': typeof ProfileContactRoute
-  '/profile/membership': typeof ProfileMembershipRoute
-  '/profile/preferences': typeof ProfilePreferencesRoute
-  '/profile/security': typeof ProfileSecurityRoute
-  '/profile/social-links': typeof ProfileSocialLinksRoute
-  '/profile': typeof ProfileIndexRoute
+  '/': typeof webIndexRoute
+  '/members/verify': typeof webMembersVerifyRoute
+  '/membership/manage': typeof webMembershipManageRoute
+  '/profile/contact': typeof webProfileContactRoute
+  '/profile/membership': typeof webProfileMembershipRoute
+  '/profile/preferences': typeof webProfilePreferencesRoute
+  '/profile/security': typeof webProfileSecurityRoute
+  '/profile/social-links': typeof webProfileSocialLinksRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/proofs/$': typeof ApiProofsSplatRoute
+  '/profile': typeof webProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/(web)': typeof webRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
-  '/profile': typeof ProfileRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/agenda': typeof AgendaRoute
-  '/contact-us': typeof ContactUsRoute
-  '/members': typeof MembersRouteWithChildren
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/publications': typeof PublicationsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/(web)/profile': typeof webProfileRouteRouteWithChildren
+  '/(web)/about': typeof webAboutRoute
+  '/(web)/agenda': typeof webAgendaRoute
+  '/(web)/contact-us': typeof webContactUsRoute
+  '/(web)/members': typeof webMembersRouteWithChildren
+  '/(web)/privacy-policy': typeof webPrivacyPolicyRoute
+  '/(web)/publications': typeof webPublicationsRoute
+  '/(web)/terms-and-conditions': typeof webTermsAndConditionsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/membership': typeof AdminMembershipRoute
   '/admin/users': typeof AdminUsersRoute
-  '/members/verify': typeof MembersVerifyRoute
-  '/membership/manage': typeof MembershipManageRoute
-  '/profile/contact': typeof ProfileContactRoute
-  '/profile/membership': typeof ProfileMembershipRoute
-  '/profile/preferences': typeof ProfilePreferencesRoute
-  '/profile/security': typeof ProfileSecurityRoute
-  '/profile/social-links': typeof ProfileSocialLinksRoute
-  '/profile/': typeof ProfileIndexRoute
+  '/(web)/': typeof webIndexRoute
+  '/(web)/members/verify': typeof webMembersVerifyRoute
+  '/(web)/membership/manage': typeof webMembershipManageRoute
+  '/(web)/profile/contact': typeof webProfileContactRoute
+  '/(web)/profile/membership': typeof webProfileMembershipRoute
+  '/(web)/profile/preferences': typeof webProfilePreferencesRoute
+  '/(web)/profile/security': typeof webProfileSecurityRoute
+  '/(web)/profile/social-links': typeof webProfileSocialLinksRoute
   '/api/assets/$': typeof ApiAssetsSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/proofs/$': typeof ApiProofsSplatRoute
+  '/(web)/profile/': typeof webProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/admin'
+    | '/sign-in'
+    | '/sign-up'
+    | '/unauthorized'
     | '/profile'
     | '/about'
     | '/agenda'
@@ -272,13 +280,11 @@ export interface FileRouteTypes {
     | '/members'
     | '/privacy-policy'
     | '/publications'
-    | '/sign-in'
-    | '/sign-up'
     | '/terms-and-conditions'
-    | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/admin/users'
+    | '/'
     | '/members/verify'
     | '/membership/manage'
     | '/profile/contact'
@@ -286,27 +292,27 @@ export interface FileRouteTypes {
     | '/profile/preferences'
     | '/profile/security'
     | '/profile/social-links'
-    | '/profile/'
     | '/api/assets/$'
     | '/api/auth/$'
     | '/api/proofs/$'
+    | '/profile/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/admin'
+    | '/sign-in'
+    | '/sign-up'
+    | '/unauthorized'
     | '/about'
     | '/agenda'
     | '/contact-us'
     | '/members'
     | '/privacy-policy'
     | '/publications'
-    | '/sign-in'
-    | '/sign-up'
     | '/terms-and-conditions'
-    | '/unauthorized'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/admin/users'
+    | '/'
     | '/members/verify'
     | '/membership/manage'
     | '/profile/contact'
@@ -314,56 +320,48 @@ export interface FileRouteTypes {
     | '/profile/preferences'
     | '/profile/security'
     | '/profile/social-links'
-    | '/profile'
     | '/api/assets/$'
     | '/api/auth/$'
     | '/api/proofs/$'
+    | '/profile'
   id:
     | '__root__'
-    | '/'
+    | '/(web)'
     | '/admin'
-    | '/profile'
-    | '/about'
-    | '/agenda'
-    | '/contact-us'
-    | '/members'
-    | '/privacy-policy'
-    | '/publications'
     | '/sign-in'
     | '/sign-up'
-    | '/terms-and-conditions'
     | '/unauthorized'
+    | '/(web)/profile'
+    | '/(web)/about'
+    | '/(web)/agenda'
+    | '/(web)/contact-us'
+    | '/(web)/members'
+    | '/(web)/privacy-policy'
+    | '/(web)/publications'
+    | '/(web)/terms-and-conditions'
     | '/admin/dashboard'
     | '/admin/membership'
     | '/admin/users'
-    | '/members/verify'
-    | '/membership/manage'
-    | '/profile/contact'
-    | '/profile/membership'
-    | '/profile/preferences'
-    | '/profile/security'
-    | '/profile/social-links'
-    | '/profile/'
+    | '/(web)/'
+    | '/(web)/members/verify'
+    | '/(web)/membership/manage'
+    | '/(web)/profile/contact'
+    | '/(web)/profile/membership'
+    | '/(web)/profile/preferences'
+    | '/(web)/profile/security'
+    | '/(web)/profile/social-links'
     | '/api/assets/$'
     | '/api/auth/$'
     | '/api/proofs/$'
+    | '/(web)/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  webRouteRoute: typeof webRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
-  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  AgendaRoute: typeof AgendaRoute
-  ContactUsRoute: typeof ContactUsRoute
-  MembersRoute: typeof MembersRouteWithChildren
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  PublicationsRoute: typeof PublicationsRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
-  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
-  MembershipManageRoute: typeof MembershipManageRoute
   ApiAssetsSplatRoute: typeof ApiAssetsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiProofsSplatRoute: typeof ApiProofsSplatRoute
@@ -376,13 +374,6 @@ declare module '@tanstack/react-router' {
       path: '/unauthorized'
       fullPath: '/unauthorized'
       preLoaderRoute: typeof UnauthorizedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms-and-conditions': {
-      id: '/terms-and-conditions'
-      path: '/terms-and-conditions'
-      fullPath: '/terms-and-conditions'
-      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -399,55 +390,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/publications': {
-      id: '/publications'
-      path: '/publications'
-      fullPath: '/publications'
-      preLoaderRoute: typeof PublicationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/members': {
-      id: '/members'
-      path: '/members'
-      fullPath: '/members'
-      preLoaderRoute: typeof MembersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact-us': {
-      id: '/contact-us'
-      path: '/contact-us'
-      fullPath: '/contact-us'
-      preLoaderRoute: typeof ContactUsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/agenda': {
-      id: '/agenda'
-      path: '/agenda'
-      fullPath: '/agenda'
-      preLoaderRoute: typeof AgendaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -455,68 +397,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/(web)': {
+      id: '/(web)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof webRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(web)/': {
+      id: '/(web)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile/': {
-      id: '/profile/'
-      path: '/'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/social-links': {
-      id: '/profile/social-links'
-      path: '/social-links'
-      fullPath: '/profile/social-links'
-      preLoaderRoute: typeof ProfileSocialLinksRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/security': {
-      id: '/profile/security'
-      path: '/security'
-      fullPath: '/profile/security'
-      preLoaderRoute: typeof ProfileSecurityRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/preferences': {
-      id: '/profile/preferences'
-      path: '/preferences'
-      fullPath: '/profile/preferences'
-      preLoaderRoute: typeof ProfilePreferencesRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/membership': {
-      id: '/profile/membership'
-      path: '/membership'
-      fullPath: '/profile/membership'
-      preLoaderRoute: typeof ProfileMembershipRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/contact': {
-      id: '/profile/contact'
-      path: '/contact'
-      fullPath: '/profile/contact'
-      preLoaderRoute: typeof ProfileContactRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/membership/manage': {
-      id: '/membership/manage'
-      path: '/membership/manage'
-      fullPath: '/membership/manage'
-      preLoaderRoute: typeof MembershipManageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/members/verify': {
-      id: '/members/verify'
-      path: '/verify'
-      fullPath: '/members/verify'
-      preLoaderRoute: typeof MembersVerifyRouteImport
-      parentRoute: typeof MembersRoute
+      preLoaderRoute: typeof webIndexRouteImport
+      parentRoute: typeof webRouteRoute
     }
     '/admin/users': {
       id: '/admin/users'
@@ -539,6 +432,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/(web)/terms-and-conditions': {
+      id: '/(web)/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof webTermsAndConditionsRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/publications': {
+      id: '/(web)/publications'
+      path: '/publications'
+      fullPath: '/publications'
+      preLoaderRoute: typeof webPublicationsRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/privacy-policy': {
+      id: '/(web)/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof webPrivacyPolicyRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/members': {
+      id: '/(web)/members'
+      path: '/members'
+      fullPath: '/members'
+      preLoaderRoute: typeof webMembersRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/contact-us': {
+      id: '/(web)/contact-us'
+      path: '/contact-us'
+      fullPath: '/contact-us'
+      preLoaderRoute: typeof webContactUsRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/agenda': {
+      id: '/(web)/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof webAgendaRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/about': {
+      id: '/(web)/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof webAboutRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/profile': {
+      id: '/(web)/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof webProfileRouteRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/profile/': {
+      id: '/(web)/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof webProfileIndexRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
     '/api/proofs/$': {
       id: '/api/proofs/$'
       path: '/api/proofs/$'
@@ -560,8 +516,121 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAssetsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(web)/profile/social-links': {
+      id: '/(web)/profile/social-links'
+      path: '/social-links'
+      fullPath: '/profile/social-links'
+      preLoaderRoute: typeof webProfileSocialLinksRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
+    '/(web)/profile/security': {
+      id: '/(web)/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof webProfileSecurityRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
+    '/(web)/profile/preferences': {
+      id: '/(web)/profile/preferences'
+      path: '/preferences'
+      fullPath: '/profile/preferences'
+      preLoaderRoute: typeof webProfilePreferencesRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
+    '/(web)/profile/membership': {
+      id: '/(web)/profile/membership'
+      path: '/membership'
+      fullPath: '/profile/membership'
+      preLoaderRoute: typeof webProfileMembershipRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
+    '/(web)/profile/contact': {
+      id: '/(web)/profile/contact'
+      path: '/contact'
+      fullPath: '/profile/contact'
+      preLoaderRoute: typeof webProfileContactRouteImport
+      parentRoute: typeof webProfileRouteRoute
+    }
+    '/(web)/membership/manage': {
+      id: '/(web)/membership/manage'
+      path: '/membership/manage'
+      fullPath: '/membership/manage'
+      preLoaderRoute: typeof webMembershipManageRouteImport
+      parentRoute: typeof webRouteRoute
+    }
+    '/(web)/members/verify': {
+      id: '/(web)/members/verify'
+      path: '/verify'
+      fullPath: '/members/verify'
+      preLoaderRoute: typeof webMembersVerifyRouteImport
+      parentRoute: typeof webMembersRoute
+    }
   }
 }
+
+interface webProfileRouteRouteChildren {
+  webProfileContactRoute: typeof webProfileContactRoute
+  webProfileMembershipRoute: typeof webProfileMembershipRoute
+  webProfilePreferencesRoute: typeof webProfilePreferencesRoute
+  webProfileSecurityRoute: typeof webProfileSecurityRoute
+  webProfileSocialLinksRoute: typeof webProfileSocialLinksRoute
+  webProfileIndexRoute: typeof webProfileIndexRoute
+}
+
+const webProfileRouteRouteChildren: webProfileRouteRouteChildren = {
+  webProfileContactRoute: webProfileContactRoute,
+  webProfileMembershipRoute: webProfileMembershipRoute,
+  webProfilePreferencesRoute: webProfilePreferencesRoute,
+  webProfileSecurityRoute: webProfileSecurityRoute,
+  webProfileSocialLinksRoute: webProfileSocialLinksRoute,
+  webProfileIndexRoute: webProfileIndexRoute,
+}
+
+const webProfileRouteRouteWithChildren = webProfileRouteRoute._addFileChildren(
+  webProfileRouteRouteChildren,
+)
+
+interface webMembersRouteChildren {
+  webMembersVerifyRoute: typeof webMembersVerifyRoute
+}
+
+const webMembersRouteChildren: webMembersRouteChildren = {
+  webMembersVerifyRoute: webMembersVerifyRoute,
+}
+
+const webMembersRouteWithChildren = webMembersRoute._addFileChildren(
+  webMembersRouteChildren,
+)
+
+interface webRouteRouteChildren {
+  webProfileRouteRoute: typeof webProfileRouteRouteWithChildren
+  webAboutRoute: typeof webAboutRoute
+  webAgendaRoute: typeof webAgendaRoute
+  webContactUsRoute: typeof webContactUsRoute
+  webMembersRoute: typeof webMembersRouteWithChildren
+  webPrivacyPolicyRoute: typeof webPrivacyPolicyRoute
+  webPublicationsRoute: typeof webPublicationsRoute
+  webTermsAndConditionsRoute: typeof webTermsAndConditionsRoute
+  webIndexRoute: typeof webIndexRoute
+  webMembershipManageRoute: typeof webMembershipManageRoute
+}
+
+const webRouteRouteChildren: webRouteRouteChildren = {
+  webProfileRouteRoute: webProfileRouteRouteWithChildren,
+  webAboutRoute: webAboutRoute,
+  webAgendaRoute: webAgendaRoute,
+  webContactUsRoute: webContactUsRoute,
+  webMembersRoute: webMembersRouteWithChildren,
+  webPrivacyPolicyRoute: webPrivacyPolicyRoute,
+  webPublicationsRoute: webPublicationsRoute,
+  webTermsAndConditionsRoute: webTermsAndConditionsRoute,
+  webIndexRoute: webIndexRoute,
+  webMembershipManageRoute: webMembershipManageRoute,
+}
+
+const webRouteRouteWithChildren = webRouteRoute._addFileChildren(
+  webRouteRouteChildren,
+)
 
 interface AdminRouteRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -579,54 +648,12 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
-interface ProfileRouteRouteChildren {
-  ProfileContactRoute: typeof ProfileContactRoute
-  ProfileMembershipRoute: typeof ProfileMembershipRoute
-  ProfilePreferencesRoute: typeof ProfilePreferencesRoute
-  ProfileSecurityRoute: typeof ProfileSecurityRoute
-  ProfileSocialLinksRoute: typeof ProfileSocialLinksRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
-}
-
-const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
-  ProfileContactRoute: ProfileContactRoute,
-  ProfileMembershipRoute: ProfileMembershipRoute,
-  ProfilePreferencesRoute: ProfilePreferencesRoute,
-  ProfileSecurityRoute: ProfileSecurityRoute,
-  ProfileSocialLinksRoute: ProfileSocialLinksRoute,
-  ProfileIndexRoute: ProfileIndexRoute,
-}
-
-const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
-  ProfileRouteRouteChildren,
-)
-
-interface MembersRouteChildren {
-  MembersVerifyRoute: typeof MembersVerifyRoute
-}
-
-const MembersRouteChildren: MembersRouteChildren = {
-  MembersVerifyRoute: MembersVerifyRoute,
-}
-
-const MembersRouteWithChildren =
-  MembersRoute._addFileChildren(MembersRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  webRouteRoute: webRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
-  ProfileRouteRoute: ProfileRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  AgendaRoute: AgendaRoute,
-  ContactUsRoute: ContactUsRoute,
-  MembersRoute: MembersRouteWithChildren,
-  PrivacyPolicyRoute: PrivacyPolicyRoute,
-  PublicationsRoute: PublicationsRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
-  TermsAndConditionsRoute: TermsAndConditionsRoute,
   UnauthorizedRoute: UnauthorizedRoute,
-  MembershipManageRoute: MembershipManageRoute,
   ApiAssetsSplatRoute: ApiAssetsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiProofsSplatRoute: ApiProofsSplatRoute,

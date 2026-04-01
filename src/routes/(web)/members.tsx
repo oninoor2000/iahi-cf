@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/members")({
+export const Route = createFileRoute("/(web)/members")({
   head: () => ({
     meta: [
       { title: "Members | IAHI" },

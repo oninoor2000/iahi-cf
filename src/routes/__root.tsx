@@ -8,16 +8,12 @@ import {
   createRootRouteWithContext,
   type ErrorComponentProps,
   useRouter,
-  useRouterState,
 } from "@tanstack/react-router";
 
 import type { AppRouterContext } from "@/router-context";
 import { ThemeProvider } from "../components/providers/theme-provider";
 
 import appCss from "../styles.css?url";
-import Footer from "@/components/sections/footer";
-import Header from "../components/sections/header";
-import MembershipPromoBanner from "@/components/sections/membership-promo-banner";
 import {
   ErrorView,
   NotFoundView,
@@ -25,29 +21,6 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 
 const THEME_INIT_SCRIPT = `(function(){try{var key='iahi-theme';var cookie=document.cookie.match(new RegExp('(?:^|; )'+key+'=([^;]*)'));var cookieMode=cookie?decodeURIComponent(cookie[1]):null;var stored=window.localStorage.getItem(key);var mode=(stored==='light'||stored==='dark'||stored==='system')?stored:((cookieMode==='light'||cookieMode==='dark'||cookieMode==='system')?cookieMode:'system');var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='system'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='system'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`;
-
-const CHROME_HIDDEN_PATHS = new Set(["/sign-in", "/sign-up", "/unauthorized"]);
-
-function SiteChrome({ children }: { children: ReactNode }) {
-  const pathname = useRouterState({
-    select: (s) => s.location.pathname,
-  });
-  const isAdminRoute = pathname.startsWith("/admin");
-  const showSiteChrome = !CHROME_HIDDEN_PATHS.has(pathname) && !isAdminRoute;
-
-  return (
-    <>
-      {showSiteChrome ? (
-        <>
-          <Header />
-          <MembershipPromoBanner />
-        </>
-      ) : null}
-      {children}
-      {showSiteChrome ? <Footer /> : null}
-    </>
-  );
-}
 
 export const Route = createRootRouteWithContext<AppRouterContext>()({
   head: () => ({
@@ -114,7 +87,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <SiteChrome>{children}</SiteChrome>
+            {children}
             <Toaster position="bottom-right" richColors closeButton />
           </ThemeProvider>
         </QueryClientProvider>
